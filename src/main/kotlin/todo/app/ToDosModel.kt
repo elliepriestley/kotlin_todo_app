@@ -3,6 +3,7 @@ package todo.app
 class ToDosModel {
     var tasks = mutableListOf<String>()
 
+
     fun addTask(task: String) {
         tasks.add(task)
     }
