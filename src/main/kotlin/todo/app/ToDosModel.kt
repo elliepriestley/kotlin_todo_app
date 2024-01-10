@@ -1,7 +1,7 @@
 package todo.app
 
-class ToDosModel(tasks: MutableList<String>) {
-    var tasks = tasks
+class ToDosModel {
+    var tasks = mutableListOf<String>()
 
     fun addTask(task: String) {
         tasks.add(task)

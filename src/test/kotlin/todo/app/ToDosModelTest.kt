@@ -7,8 +7,7 @@ class ToDosModelTest {
 
     @Test
     fun `Test that addTask function adds task to the tasks list`() {
-        val tasks = mutableListOf("Walk the dog", "Feed the cat")
-        val model = ToDosModel(tasks)
+        val model = ToDosModel()
         model.addTask("Go to the gym")
 
         assertTrue(model.tasks.contains("Go to the gym"))
@@ -16,8 +15,11 @@ class ToDosModelTest {
 
     @Test
     fun `Test that clearTasks function removes all elements from tasks list`() {
-        val tasks = mutableListOf("Walk the dog", "Feed the cat")
-        val model = ToDosModel(tasks)
+        val model = ToDosModel()
+
+        model.addTask("Go to the gym")
+
+        assertFalse(model.tasks.isEmpty())
 
         model.clearTasks()
 
@@ -26,9 +28,10 @@ class ToDosModelTest {
 
     @Test
     fun `Test that returnTasks method returns all tasks in task list`() {
-        val tasks = mutableListOf("Walk the dog", "Feed the cat")
-        val model = ToDosModel(tasks)
+        val model = ToDosModel()
 
-        assertEquals(listOf("Walk the dog", "Feed the cat"), model.returnTasks())
+
+        model.addTask("Go to the gym")
+        assertEquals(listOf("Go to the gym"), model.returnTasks())
     }
 }
