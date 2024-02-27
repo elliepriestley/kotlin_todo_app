@@ -1,12 +1,15 @@
 # ToDoApp
 
-## Package
-```
-./gradlew distZip
-```
+### Milestone 1
+## Functionality
+- Add a todo item 
+- Edit todo item 
+- Mark todo as done
+- Unmark done todo 
+- Get details of a single todo item 
+- Get details of all todo items by status
 
-## Part One 
-- create a simple server with a notes endpoint
-- when a get request is sent, it returns 200 OK status and a list of notes in response body 
+## Tech requirements
+- Should be usable only as an API 
+- Should store data in text files
 
-## Part Two 

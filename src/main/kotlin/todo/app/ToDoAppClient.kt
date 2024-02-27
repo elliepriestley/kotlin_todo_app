@@ -7,19 +7,18 @@ import org.http4k.core.Method.POST
 
 
 
-class ToDoAppClient(baseURL: String) {
-    private val baseURL = baseURL
-    private val client: HttpHandler = JavaHttpClient()
+class ToDoAppClient(private val baseURL: String) {
+    private val client = JavaHttpClient()
 
 
-    fun getNotes(): String {
-        val requestURL = "$baseURL/notes"
+    fun getToDos(): String {
+        val requestURL = "$baseURL/todos"
         return client(Request(GET, requestURL)).bodyString()
 
     }
 
-    fun addNewNote(note: String): Response {
-        val requestUrl = "$baseURL/notes"
+    fun addNewToDo(note: String): Response {
+        val requestUrl = "$baseURL/todos"
         val request = Request(POST, requestUrl).body(note)
         return client(request)
     }
@@ -32,9 +31,9 @@ class ToDoAppClient(baseURL: String) {
 
 fun main() {
     val client = ToDoAppClient("http://localhost:9000")
-    println(client.getNotes())
-    client.addNewNote("Walk the dog")
-    println(client.getNotes())
+    println(client.getToDos())
+    client.addNewToDo("Walk the dog")
+    println(client.getToDos())
 
 
 }
