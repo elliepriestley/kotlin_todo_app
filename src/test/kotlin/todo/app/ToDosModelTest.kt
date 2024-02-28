@@ -2,6 +2,7 @@ package todo.app
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import todo.app.repo.ToDosModel
 
 class ToDosModelTest {
 

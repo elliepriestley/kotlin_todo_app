@@ -1,4 +1,4 @@
-package todo.app
+package todo.app.repo
 
 class ToDosModel {
     var tasks = mutableListOf<String>()
