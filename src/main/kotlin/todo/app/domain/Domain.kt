@@ -9,10 +9,11 @@ import todo.app.repo.ToDoRepoInterface
 class Domain(private val toDoRepo: ToDoRepoInterface) {
 
     fun getAllTodos(): List<ToDoItem> {
-        val unprocessedToDoList = toDoRepo.fetchAllToDoItems()
-        return unprocessedToDoList.map { taskName ->
-            ToDoItem("randomID", taskName, ToDoItem.Status.NOT_DONE )
-        }
+        return toDoRepo.fetchAllToDoItems()
+    }
+
+    fun getToDoById(id: String): ToDoItem? {
+        return toDoRepo.fetchToDoItemById(id)
     }
 
 
@@ -20,7 +21,7 @@ class Domain(private val toDoRepo: ToDoRepoInterface) {
 fun main() {
     val fileRepo = FileTaskRepo()
     val domain = Domain(fileRepo)
-    println(domain.getAllTodos())
+    println(domain.getToDoById("1"))
 }
 
 

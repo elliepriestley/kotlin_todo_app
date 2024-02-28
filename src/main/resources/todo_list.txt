@@ -1,3 +1,4 @@
-Wash car
-Walk cat
-Buy dinner
+id,taskName,status
+1,Wash car,NOT_DONE
+2,Walk cat,NOT_DONE
+3,Buy dinner,NOT_DONE

@@ -12,14 +12,23 @@ class FileTaskRepo : ToDoRepoInterface {
         }
     }
 
-    private val toDoList: List<String> = resourceStream.bufferedReader().useLines { it.toList() }
+    private val toDoList: List<ToDoItem> = resourceStream.bufferedReader().useLines { lines ->
+        lines.drop(1).map { line ->
+            val (id, name, status) = line.split(",")
+            ToDoItem(id, name, ToDoItem.Status.valueOf(status))
+        }.toList()
+    }
 
-    override fun fetchAllToDoItems(): List<String> {
+
+
+    override fun fetchAllToDoItems(): List<ToDoItem> {
         return toDoList
     }
 
-    override fun fetchToDoItemById(id: String): ToDoItem {
-        TODO("Not yet implemented")
+    override fun fetchToDoItemById(id: String): ToDoItem?{
+        return toDoList.find { toDoItem ->
+            toDoItem.id == id
+        }
     }
 
     override fun addToDoItem(toDoItem: ToDoItem) {
@@ -34,5 +43,5 @@ class FileTaskRepo : ToDoRepoInterface {
 
 fun main() {
     val fileRepo = FileTaskRepo()
-    println(fileRepo.fetchAllToDoItems())
+    println(fileRepo.fetchToDoItemById("1"))
 }
