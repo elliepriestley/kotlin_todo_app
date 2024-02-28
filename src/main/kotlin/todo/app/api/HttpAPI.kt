@@ -17,7 +17,8 @@ class HttpAPI(domain: Domain) {
 
     val app: HttpHandler = routes(
         "/todos" bind GET to { _ ->
-            Response(OK).body(model.returnTasks().toString())
+            val toDoList = domain.getAllTodos()
+            Response(OK).body(toDoList.toString())
         },
 
         "/todos" bind POST to { req ->

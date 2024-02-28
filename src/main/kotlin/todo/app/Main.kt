@@ -11,7 +11,7 @@ import todo.app.repo.FileTaskRepo
 
 fun main() {
     val taskRepo = FileTaskRepo()
-    val domain = Domain("http://localhost:9000", taskRepo)
+    val domain = Domain(taskRepo)
     val api = HttpAPI(domain)
     val printingApp: HttpHandler = DebuggingFilters.PrintRequest().then(api.app)
 

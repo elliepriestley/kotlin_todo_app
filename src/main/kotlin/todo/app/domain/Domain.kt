@@ -1,25 +1,28 @@
 package todo.app.domain
 
-import org.http4k.core.*
-import org.http4k.core.Method.GET
-import org.http4k.core.Method.POST
-import todo.app.repo.TaskRepoInterface
+import todo.app.repo.FileTaskRepo
+
+import todo.app.repo.ToDoItem
+import todo.app.repo.ToDoRepoInterface
 
 
-class Domain(private val baseURL: String, taskRepo: TaskRepoInterface) {
+class Domain(private val toDoRepo: ToDoRepoInterface) {
 
-//    fun getToDos(): String {
-//        val requestURL = "$baseURL/todos"
-//        return client(Request(GET, requestURL)).bodyString()
-//
-//    }
+    fun getAllTodos(): List<ToDoItem> {
+        val unprocessedToDoList = toDoRepo.fetchAllToDoItems()
+        return unprocessedToDoList.map { taskName ->
+            ToDoItem("randomID", taskName, ToDoItem.Status.NOT_DONE )
+        }
+    }
 
-//    fun addNewToDo(note: String): Response {
-//        val requestUrl = "$baseURL/todos"
-//        val request = Request(POST, requestUrl).body(note)
-//        return client(request)
-//    }
+
 }
+fun main() {
+    val fileRepo = FileTaskRepo()
+    val domain = Domain(fileRepo)
+    println(domain.getAllTodos())
+}
+
 
 
 
