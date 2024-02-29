@@ -2,3 +2,4 @@ id,taskName,status
 1,Wash car,NOT_DONE
 2,Walk cat,NOT_DONE
 3,Buy dinner,NOT_DONE
+4,Buy coffee beans,NOT_DONE
