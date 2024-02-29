@@ -20,13 +20,24 @@ class Domain(private val toDoRepo: ToDoRepoInterface) {
         toDoRepo.addToDoItem(toDoItem)
     }
 
+    fun editToDoItemName(id: String, updatedToDoTaskName: String): ToDoItem? {
+        return toDoRepo.editToDoItemName(id, updatedToDoTaskName)
+    }
+
+    fun markToDoItemAsDone(id: String): ToDoItem? {
+        return toDoRepo.markToDoItemAsDone(id)
+
+    }
+
+    fun markToDoItemAsNotDone(id: String):ToDoItem? {
+        return toDoRepo.markToDoItemAsNotDone(id)
+    }
+
 
 }
 fun main() {
     val fileRepo = FileTaskRepo()
     val domain = Domain(fileRepo)
-    val toDoItem = ToDoItem("5", "learn Kotlin", ToDoItem.Status.NOT_DONE)
-    domain.addToDoItem(toDoItem)
 
 }
 

@@ -1,6 +1,7 @@
 package todo.app.api
 
 import org.http4k.core.HttpHandler
+import org.http4k.core.Method.PATCH
 import org.http4k.core.Method.GET
 import org.http4k.core.Method.POST
 import org.http4k.core.Response
@@ -19,6 +20,7 @@ class HttpAPI(domain: Domain) {
             Response(OK).body(toDoList.toString())
 
         },
+
         "/todos/{id}" bind GET to { req ->
             val toDoItemId: String? = req.path("id")
             val toDoItem = toDoItemId?.let { domain.getToDoById(it) }
@@ -34,6 +36,39 @@ class HttpAPI(domain: Domain) {
             val note = req.bodyString()
             domain.addToDoItem(ToDoItem(id = "test", note, ToDoItem.Status.NOT_DONE))
             Response(OK).body("You have added a note")
+        },
+
+        "/todos/{id}/done" bind PATCH to { req ->
+            val toDoItemId: String? = req.path("id")
+            val toDoItem = toDoItemId?.let { domain.markToDoItemAsDone(toDoItemId) }
+
+            if (toDoItem != null) {
+                Response(OK).body(toDoItem.toString())
+            } else {
+                Response(NOT_FOUND).body("Problem accessing todo task")
+            }
+        },
+
+        "/todos/{id}/not_done" bind PATCH to { req ->
+            val toDoItemId: String? = req.path("id")
+            val toDoItem = toDoItemId?.let { domain.markToDoItemAsNotDone(toDoItemId) }
+            if (toDoItem != null) {
+                Response(OK).body(toDoItem.toString())
+            } else {
+                Response(NOT_FOUND).body("Problem accessing todo task")
+            }
+        },
+
+        "todos/{id}/task_name" bind PATCH to { req ->
+            val toDoItemId: String?  = req.path("id")
+            val updatedTaskName: String = req.bodyString()
+            val toDoItem = toDoItemId?.let {domain.editToDoItemName(toDoItemId, updatedTaskName) }
+
+            if (toDoItem != null) {
+                Response(OK).body(toDoItem.toString())
+            } else {
+                Response(NOT_FOUND).body("Problem accessing todo task")
+            }
         }
     )
 

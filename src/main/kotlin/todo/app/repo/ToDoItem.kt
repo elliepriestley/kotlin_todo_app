@@ -2,8 +2,8 @@ package todo.app.repo
 
 class ToDoItem(
     val id: String,
-    val taskName: String,
-    val status: Status) {
+    var taskName: String,
+    var status: Status) {
     override fun toString(): String {
         return "ToDoItem(id='$id', taskName='$taskName', status=$status)"
     }

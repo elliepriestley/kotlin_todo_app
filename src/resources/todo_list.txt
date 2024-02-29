@@ -1,7 +1,7 @@
 id,taskName,status
-1,Wash car,NOT_DONE
-2,Walk cat,NOT_DONE
+1,Learn Kotlin,NOT_DONE
+2,Feed suki,DONE
 3,Buy dinner,NOT_DONE
 4,Buy coffee beans,NOT_DONE
-5,learn Kotlin,NOT_DONE
-test,"Eat cake",NOT_DONE
+5,Go for a walk,NOT_DONE
+7,"Eat cake",NOT_DONE
