@@ -2,7 +2,7 @@ id,taskName,status
 1,Learn Kotlin,NOT_DONE
 2,Feed suki,DONE
 3,Buy dinner,NOT_DONE
-4,Buy coffee beans,NOT_DONE
+4,Eat lunch,DONE
 5,Go for a walk,NOT_DONE
 6,Eat cake,NOT_DONE
 7,Another task ,NOT_DONE

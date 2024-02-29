@@ -24,8 +24,8 @@ class HttpAPI(domain: Domain) {
     val app: HttpHandler = routes(
         "/todos" bind GET to { _ ->
             val toDoList = domain.getAllTodos()
-            Response(OK).body(toDoList.toString())
-
+            val jsonResponse = mapper.writeValueAsString(toDoList)
+            Response(OK).body(jsonResponse)
         },
 
         "/todos/{id}" bind GET to { req ->
@@ -33,7 +33,8 @@ class HttpAPI(domain: Domain) {
             val toDoItem = toDoItemId?.let { domain.getToDoById(it) }
 
             if (toDoItem != null) {
-                Response(OK).body(toDoItem.toString())
+                val jsonResponse = mapper.writeValueAsString(toDoItem)
+                Response(OK).body(jsonResponse)
             } else {
                 Response(NOT_FOUND).body("To do item not found")
             }
@@ -64,7 +65,8 @@ class HttpAPI(domain: Domain) {
             val toDoItem = toDoItemId?.let { domain.markToDoItemAsDone(toDoItemId) }
 
             if (toDoItem != null) {
-                Response(OK).body(toDoItem.toString())
+                val jsonResponse = mapper.writeValueAsString(toDoItem)
+                Response(OK).body(jsonResponse)
             } else {
                 Response(NOT_FOUND).body("Problem accessing todo task")
             }
@@ -74,7 +76,8 @@ class HttpAPI(domain: Domain) {
             val toDoItemId: String? = req.path("id")
             val toDoItem = toDoItemId?.let { domain.markToDoItemAsNotDone(toDoItemId) }
             if (toDoItem != null) {
-                Response(OK).body(toDoItem.toString())
+                val jsonResponse = mapper.writeValueAsString(toDoItem)
+                Response(OK).body(jsonResponse)
             } else {
                 Response(NOT_FOUND).body("Problem accessing todo task")
             }
@@ -82,11 +85,19 @@ class HttpAPI(domain: Domain) {
 
         "todos/{id}/task_name" bind PATCH to { req ->
             val toDoItemId: String?  = req.path("id")
-            val updatedTaskName: String = req.bodyString()
-            val toDoItem = toDoItemId?.let {domain.editToDoItemName(toDoItemId, updatedTaskName) }
 
-            if (toDoItem != null) {
-                Response(OK).body(toDoItem.toString())
+            val jsonUpdatedTaskName = req.bodyString()
+            val jsonNode = try {
+                mapper.readTree(jsonUpdatedTaskName)
+            } catch (e: Exception) {
+                null
+            }
+
+            if (jsonNode != null && jsonNode.has("taskName")) {
+                val taskName = jsonNode.get("taskName").asText()
+                val toDoItem = toDoItemId?.let {domain.editToDoItemName(toDoItemId, taskName) }
+                val jsonResponse = mapper.writeValueAsString(toDoItem)
+                Response(OK).body(jsonResponse)
             } else {
                 Response(NOT_FOUND).body("Problem accessing todo task")
             }
