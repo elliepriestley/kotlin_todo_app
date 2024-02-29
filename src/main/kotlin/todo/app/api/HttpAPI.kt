@@ -6,8 +6,6 @@ import org.http4k.core.Method.POST
 import org.http4k.core.Response
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Status.Companion.OK
-import org.http4k.lens.Query
-import org.http4k.lens.string
 import org.http4k.routing.bind
 import org.http4k.routing.path
 import org.http4k.routing.routes
@@ -18,8 +16,6 @@ import todo.app.repo.ToDosModel
 var model = ToDosModel()
 
 class HttpAPI(domain: Domain) {
-    val optionalIdQuery = Query.string().optional("id")
-
     val app: HttpHandler = routes(
         "/todos" bind GET to { _ ->
             val toDoList = domain.getAllTodos()
@@ -28,20 +24,20 @@ class HttpAPI(domain: Domain) {
         },
         "/todos/{id}" bind GET to { req ->
             val toDoItemId: String? = req.path("id")
+            val toDoItem = toDoItemId?.let { domain.getToDoById(it) }
 
-            if (toDoItemId != null) {
-                val toDoItem = domain.getToDoById(toDoItemId)
+            if (toDoItem != null) {
                 Response(OK).body(toDoItem.toString())
             } else {
-                Response(NOT_FOUND).body("oops")
+                Response(NOT_FOUND).body("To do item not found")
             }
         },
 
-        "/todos" bind POST to { req ->
-            val note = req.bodyString()
-            model.addTask(note)
-            Response(OK).body("You have added a note")
-        }
+//        "/todos" bind POST to { req ->
+//            val note = req.bodyString()
+//            model.addTask(note)
+//            Response(OK).body("You have added a note")
+//        }
     )
 
 }
