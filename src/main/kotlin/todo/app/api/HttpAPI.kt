@@ -1,5 +1,6 @@
 package todo.app.api
 
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method.PATCH
@@ -16,7 +17,9 @@ import todo.app.domain.Domain
 import todo.app.repo.ToDoItem
 
 class HttpAPI(domain: Domain) {
-    private val mapper = jacksonObjectMapper()
+    private val mapper = jacksonObjectMapper().apply {
+        enable(SerializationFeature.INDENT_OUTPUT)
+    }
 
     val app: HttpHandler = routes(
         "/todos" bind GET to { _ ->
@@ -49,9 +52,10 @@ class HttpAPI(domain: Domain) {
                 val newId = domain.generateNewIdNumber()
                 val newToDoItem = ToDoItem(newId, taskName, ToDoItem.Status.NOT_DONE)
                 domain.addToDoItem(newToDoItem)
-                Response(OK).body(newToDoItem.toString())
+                val jsonResponse = mapper.writeValueAsString(newToDoItem)
+                Response(OK).body(jsonResponse)
             } else {
-                Response(BAD_REQUEST).body("Invalid JSON format")
+                Response(BAD_REQUEST).body("Invalid JSON format or missing taskName field")
             }
         },
 

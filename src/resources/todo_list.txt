@@ -8,3 +8,5 @@ id,taskName,status
 7,Another task ,NOT_DONE
 8,Another task ,NOT_DONE
 9,Buy tiles,NOT_DONE
+10,Buy carpet,NOT_DONE
+11,Buy diet coke,NOT_DONE
