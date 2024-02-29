@@ -1,5 +1,6 @@
 package todo.app.api
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.http4k.core.HttpHandler
@@ -20,6 +21,16 @@ class HttpAPI(domain: Domain) {
     private val mapper = jacksonObjectMapper().apply {
         enable(SerializationFeature.INDENT_OUTPUT)
     }
+    fun whatPropertyNeedsPatching(jsonNode: JsonNode): String {
+        return if (jsonNode.has("taskName")) {
+            "taskName"
+        } else if (jsonNode.has("status")) {
+            "status"
+        } else {
+            "error"
+        }
+    }
+
 
     val app: HttpHandler = routes(
         "/todos" bind GET to { _ ->
@@ -83,25 +94,35 @@ class HttpAPI(domain: Domain) {
             }
         },
 
-        "todos/{id}/task_name" bind PATCH to { req ->
+        "todos/{id}" bind PATCH to { req ->
             val toDoItemId: String?  = req.path("id")
-
-            val jsonUpdatedTaskName = req.bodyString()
-            val jsonNode = try {
-                mapper.readTree(jsonUpdatedTaskName)
+            val jsonDataRequestedToPatch = req.bodyString()
+            val jsonNodeRequestedToPatch = try {
+                mapper.readTree(jsonDataRequestedToPatch)
             } catch (e: Exception) {
                 null
             }
 
-            if (jsonNode != null && jsonNode.has("taskName")) {
-                val taskName = jsonNode.get("taskName").asText()
-                val toDoItem = toDoItemId?.let {domain.editToDoItemName(toDoItemId, taskName) }
-                val jsonResponse = mapper.writeValueAsString(toDoItem)
-                Response(OK).body(jsonResponse)
+            if (jsonNodeRequestedToPatch != null) {
+                when (whatPropertyNeedsPatching(jsonNodeRequestedToPatch)) {
+                    "taskName" -> {
+                        val taskName = jsonNodeRequestedToPatch.get("taskName").asText()
+                        val toDoItem = toDoItemId?.let {domain.editToDoItemName(toDoItemId, taskName) }
+                        val jsonResponse = mapper.writeValueAsString(toDoItem)
+                        Response(OK).body(jsonResponse)
+                    }
+                    "status" -> TODO()
+                    "error" -> TODO()
+                    else -> Response(BAD_REQUEST).body("Json Request not as expected")
+                }
+
             } else {
-                Response(NOT_FOUND).body("Problem accessing todo task")
+                Response(BAD_REQUEST).body("Json Request is null")
             }
+
+
         }
+
     )
 
 }
