@@ -10,10 +10,7 @@ import org.http4k.routing.bind
 import org.http4k.routing.path
 import org.http4k.routing.routes
 import todo.app.domain.Domain
-import todo.app.repo.ToDosModel
-
-
-var model = ToDosModel()
+import todo.app.repo.ToDoItem
 
 class HttpAPI(domain: Domain) {
     val app: HttpHandler = routes(
@@ -33,11 +30,11 @@ class HttpAPI(domain: Domain) {
             }
         },
 
-//        "/todos" bind POST to { req ->
-//            val note = req.bodyString()
-//            model.addTask(note)
-//            Response(OK).body("You have added a note")
-//        }
+        "/todos" bind POST to { req ->
+            val note = req.bodyString()
+            domain.addToDoItem(ToDoItem(id = "test", note, ToDoItem.Status.NOT_DONE))
+            Response(OK).body("You have added a note")
+        }
     )
 
 }

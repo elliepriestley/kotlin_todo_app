@@ -3,3 +3,5 @@ id,taskName,status
 2,Walk cat,NOT_DONE
 3,Buy dinner,NOT_DONE
 4,Buy coffee beans,NOT_DONE
+5,learn Kotlin,NOT_DONE
+test,"Eat cake",NOT_DONE
