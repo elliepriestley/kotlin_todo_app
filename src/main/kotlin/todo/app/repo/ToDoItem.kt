@@ -1,6 +1,6 @@
 package todo.app.repo
 
-class ToDoItem(
+data class ToDoItem(
     val id: String,
     var taskName: String,
     var status: Status) {

@@ -1,7 +1,6 @@
 package todo.app.domain
 
-import todo.app.repo.FileTaskRepo
-
+import todo.app.repo.FileToDoRepo
 import todo.app.repo.ToDoItem
 import todo.app.repo.ToDoRepoInterface
 
@@ -33,10 +32,14 @@ class Domain(private val toDoRepo: ToDoRepoInterface) {
         return toDoRepo.markToDoItemAsNotDone(id)
     }
 
+    fun generateNewIdNumber(): String {
+        return toDoRepo.generateIdNumber()
+    }
+
 
 }
 fun main() {
-    val fileRepo = FileTaskRepo()
+    val fileRepo = FileToDoRepo()
     val domain = Domain(fileRepo)
 
 }

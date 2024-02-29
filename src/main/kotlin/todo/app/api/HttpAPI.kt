@@ -1,10 +1,12 @@
 package todo.app.api
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method.PATCH
 import org.http4k.core.Method.GET
 import org.http4k.core.Method.POST
 import org.http4k.core.Response
+import org.http4k.core.Status.Companion.BAD_REQUEST
 import org.http4k.core.Status.Companion.NOT_FOUND
 import org.http4k.core.Status.Companion.OK
 import org.http4k.routing.bind
@@ -14,6 +16,8 @@ import todo.app.domain.Domain
 import todo.app.repo.ToDoItem
 
 class HttpAPI(domain: Domain) {
+    private val mapper = jacksonObjectMapper()
+
     val app: HttpHandler = routes(
         "/todos" bind GET to { _ ->
             val toDoList = domain.getAllTodos()
@@ -33,9 +37,22 @@ class HttpAPI(domain: Domain) {
         },
 
         "/todos" bind POST to { req ->
-            val note = req.bodyString()
-            domain.addToDoItem(ToDoItem(id = "test", note, ToDoItem.Status.NOT_DONE))
-            Response(OK).body("You have added a note")
+            val jsonToDoTask = req.bodyString()
+            val jsonNode = try {
+                mapper.readTree(jsonToDoTask)
+            } catch (e: Exception) {
+                null
+            }
+
+            if (jsonNode != null && jsonNode.has("taskName")) {
+                val taskName = jsonNode.get("taskName").asText()
+                val newId = domain.generateNewIdNumber()
+                val newToDoItem = ToDoItem(newId, taskName, ToDoItem.Status.NOT_DONE)
+                domain.addToDoItem(newToDoItem)
+                Response(OK).body(newToDoItem.toString())
+            } else {
+                Response(BAD_REQUEST).body("Invalid JSON format")
+            }
         },
 
         "/todos/{id}/done" bind PATCH to { req ->

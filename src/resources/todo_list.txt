@@ -4,4 +4,7 @@ id,taskName,status
 3,Buy dinner,NOT_DONE
 4,Buy coffee beans,NOT_DONE
 5,Go for a walk,NOT_DONE
-7,"Eat cake",NOT_DONE
+6,Eat cake,NOT_DONE
+7,Another task ,NOT_DONE
+8,Another task ,NOT_DONE
+9,Buy tiles,NOT_DONE

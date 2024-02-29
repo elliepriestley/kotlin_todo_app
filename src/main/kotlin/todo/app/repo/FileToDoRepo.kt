@@ -3,14 +3,23 @@ package todo.app.repo
 import java.io.*
 
 
-class FileTaskRepo : ToDoRepoInterface {
+class FileToDoRepo : ToDoRepoInterface {
     private val absolutePath = "/Users/elliepriestley/IdeaProjects/ToDoApp/src/resources/todo_list.txt"
     private val file = File(absolutePath)
-    private val toDoList: List<ToDoItem> = file.inputStream().bufferedReader().useLines { lines ->
+    var toDoList: List<ToDoItem> = file.inputStream().bufferedReader().useLines { lines ->
         lines.drop(1).map { line ->
             val (id, name, status) = line.split(",")
             ToDoItem(id, name, ToDoItem.Status.valueOf(status))
         }.toList()
+    }
+
+    fun refreshtoDoList() {
+        toDoList = file.inputStream().bufferedReader().useLines { lines ->
+            lines.drop(1).map { line ->
+                val (id, name, status) = line.split(",")
+                ToDoItem(id, name, ToDoItem.Status.valueOf(status))
+            }.toList()
+        }
     }
 
     override fun fetchAllToDoItems(): List<ToDoItem> {
@@ -47,20 +56,6 @@ class FileTaskRepo : ToDoRepoInterface {
         println("ToDo item with ID $id not found.")
         return null
     }
-    private fun saveToDoListToFile() {
-        try {
-            file.bufferedWriter().use { writer ->
-                writer.write("id,taskName,status\n") // Write the header
-                toDoList.forEach { item ->
-                    writer.write("${item.id},${item.taskName},${item.status}\n")
-                }
-            }
-            println("ToDo list saved successfully.")
-        } catch (e: IOException) {
-            println("Failed to save the todo list: ${e.message}")
-            e.printStackTrace()
-        }
-    }
 
     override fun markToDoItemAsDone(id: String): ToDoItem? {
         val relevantToDoItem = toDoList.find { it.id == id }
@@ -86,11 +81,32 @@ class FileTaskRepo : ToDoRepoInterface {
         return null
     }
 
+    private fun saveToDoListToFile() {
+        try {
+            file.bufferedWriter().use { writer ->
+                writer.write("id,taskName,status\n") // Write the header
+                toDoList.forEach { item ->
+                    writer.write("${item.id},${item.taskName},${item.status}\n")
+                }
+            }
+            println("ToDo list saved successfully.")
+        } catch (e: IOException) {
+            println("Failed to save the todo list: ${e.message}")
+            e.printStackTrace()
+        }
+    }
+
+    override fun generateIdNumber(): String {
+        refreshtoDoList()
+        val newIdNumber = (toDoList.count()+1).toString()
+        return newIdNumber
+    }
 
 }
 
 fun main() {
-    val fileRepo = FileTaskRepo()
+    val fileRepo = FileToDoRepo()
+
 
 
 }

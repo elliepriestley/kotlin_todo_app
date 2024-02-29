@@ -14,5 +14,7 @@ interface ToDoRepoInterface {
 
     fun markToDoItemAsNotDone(id: String): ToDoItem?
 
+    fun generateIdNumber(): String
+
 
 }

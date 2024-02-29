@@ -7,10 +7,10 @@ import org.http4k.server.SunHttp
 import org.http4k.server.asServer
 import todo.app.api.HttpAPI
 import todo.app.domain.Domain
-import todo.app.repo.FileTaskRepo
+import todo.app.repo.FileToDoRepo
 
 fun main() {
-    val taskRepo = FileTaskRepo()
+    val taskRepo = FileToDoRepo()
     val domain = Domain(taskRepo)
     val api = HttpAPI(domain)
     val printingApp: HttpHandler = DebuggingFilters.PrintRequest().then(api.app)
