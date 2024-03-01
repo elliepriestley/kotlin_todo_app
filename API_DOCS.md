@@ -11,12 +11,16 @@ Response:
 ```
 [ {
   "id" : "1",
-  "taskName" : "Buy some plants",
-  "status" : "DONE"
+  "taskName" : "Go for a walk",
+  "createdDate" : "2024-03-01T16:04:43.20388",
+  "editedDate" : "null",
+  "status" : "NOT_DONE"
 }, {
   "id" : "2",
-  "taskName" : "Feed suki",
-  "status" : "DONE"
+  "taskName" : "Eat some cake",
+  "createdDate" : "2024-03-01T16:04:57.100648",
+  "editedDate" : "null",
+  "status" : "NOT_DONE"
 } ]
 ```
 
@@ -24,33 +28,38 @@ Response:
 ### GET /todos/status/{status}
 - To get details of todos by status, either `DONE` or `NOT_DONE`
 
-Request URL: `get /todos/status/NOT_DONE`
+Request URL: `get /todos/status/DONE`
 
 Response:
 ```
 [ {
-  "id" : "3",
-  "taskName" : "Buy dinner",
-  "status" : "NOT_DONE"
+  "id" : "6",
+  "taskName" : "Skip the gym",
+  "createdDate" : "2024-03-01T17:19:55.287336",
+  "editedDate" : "2024-03-01T17:25:29.453909",
+  "status" : "DONE"
 }, {
   "id" : "7",
-  "taskName" : "Another task ",
-  "status" : "NOT_DONE"
+  "taskName" : "Get ready for the evening",
+  "createdDate" : "2024-03-01T17:25:58.865853",
+  "editedDate" : "2024-03-01T17:26:11.725108",
+  "status" : "DONE"
 } ]
 ```
 
 ### GET /todos/{id}
 - To get details of a single todo item 
 
-Request URL: `get /todos/123`
+Request URL: `get /todos/4`
 
 Response:
 ```
 {
-    id: "123"
-    name: "buy milk"
-    createdDate: "2024-02-27T13:45:43.999Z+1"
-    status: "NOT_DONE"
+  "id" : "4",
+  "taskName" : "Feed Suki",
+  "createdDate" : "2024-03-01T16:08:56.932709",
+  "editedDate" : "null",
+  "status" : "NOT_DONE"
 }
 
 ```
@@ -67,10 +76,11 @@ Request
 Response:
 ```
 {
-    id: "123",
-    name: "buy milk",
-    createdDate: "2024-02-27T13:45:43.999Z+1" // ISO8601
-    status: "NOT_DONE"
+  "id" : "7",
+  "taskName" : "buy milk",
+  "createdDate" : "2024-03-01T17:25:58.865853",
+  "editedDate" : null,
+  "status" : "NOT_DONE"
 }
 ```
 
@@ -78,20 +88,21 @@ Response:
 - To edit a todo item, i.e. to change the name or to mark or unmark as done
 - You may only change one field per request, i.e. `status` OR `taskName` but not both.
 
-Request:
+- Request URL: `PATCH /todos/7`
+- Request Body:
 ```
 {
-    status: "NOT_DONE"
+    status: "DONE"
 }
 ```
 Response:
 ```
 {
-    id: "123",
-    name: "buy soy milk",
-    createdDate: "2024-02-27T13:48:43.999Z+1" // ISO8601
-    modifiedDate: "2024-02-27T13:50:43.999Z+1" // ISO8601
-    status: "DONE"
+  "id" : "7",
+  "taskName" : "buy milk",
+  "createdDate" : "2024-03-01T17:25:58.865853",
+  "editedDate" : "2024-03-01T17:30:15.992232",
+  "status" : "DONE"
 }
 ```
 
