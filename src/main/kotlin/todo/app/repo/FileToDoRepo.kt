@@ -8,25 +8,27 @@ class FileToDoRepo : ToDoRepoInterface {
     private val file = File(absolutePath)
     var toDoList: List<ToDoItem> = file.inputStream().bufferedReader().useLines { lines ->
         lines.drop(1).map { line ->
-            val (id, name, status) = line.split(",")
-            ToDoItem(id, name, ToDoItem.Status.valueOf(status))
+            val (id, name, createdDate, status) = line.split(",")
+            ToDoItem(id, name, createdDate, ToDoItem.Status.valueOf(status))
         }.toList()
     }
 
     fun refreshtoDoList() {
         toDoList = file.inputStream().bufferedReader().useLines { lines ->
             lines.drop(1).map { line ->
-                val (id, name, status) = line.split(",")
-                ToDoItem(id, name, ToDoItem.Status.valueOf(status))
+                val (id, name, createdDate, status) = line.split(",")
+                ToDoItem(id, name, createdDate, ToDoItem.Status.valueOf(status))
             }.toList()
         }
     }
 
     override fun fetchAllToDoItems(): List<ToDoItem> {
+        refreshtoDoList()
         return toDoList
     }
 
     override fun fetchToDoItemsByStatus(status: ToDoItem.Status): List<ToDoItem> {
+        refreshtoDoList()
         return if (status == ToDoItem.Status.DONE) {
             toDoList.filter {it.status == ToDoItem.Status.DONE }
         } else {
@@ -35,14 +37,16 @@ class FileToDoRepo : ToDoRepoInterface {
     }
 
     override fun fetchToDoItemById(id: String): ToDoItem? {
+        refreshtoDoList()
         return toDoList.find { toDoItem ->
             toDoItem.id == id
         }
     }
 
     override fun addToDoItem(toDoItem: ToDoItem) {
+        refreshtoDoList()
         try {
-            val toDoItemString = "${toDoItem.id},${toDoItem.taskName},${toDoItem.status}\n"
+            val toDoItemString = "${toDoItem.id},${toDoItem.taskName},${toDoItem.createdDate},${toDoItem.status}\n"
             val filePath = "src/resources/todo_list.txt"
             val file = File(filePath)
             file.appendText(toDoItemString)
@@ -54,6 +58,7 @@ class FileToDoRepo : ToDoRepoInterface {
     }
 
     override fun editToDoItemName(id: String, updatedToDoTaskName: String): ToDoItem? {
+        refreshtoDoList()
         val relevantToDoItem = toDoList.find { it.id == id }
 
         relevantToDoItem?.let { todoItem ->
@@ -66,6 +71,7 @@ class FileToDoRepo : ToDoRepoInterface {
     }
 
     override fun markToDoItemAsDone(id: String): ToDoItem? {
+        refreshtoDoList()
         val relevantToDoItem = toDoList.find { it.id == id }
 
         relevantToDoItem?.let { todoItem ->
@@ -78,6 +84,7 @@ class FileToDoRepo : ToDoRepoInterface {
     }
 
     override fun markToDoItemAsNotDone(id: String): ToDoItem? {
+        refreshtoDoList()
         val relevantToDoItem = toDoList.find { it.id == id }
 
         relevantToDoItem?.let { todoItem ->
@@ -90,11 +97,12 @@ class FileToDoRepo : ToDoRepoInterface {
     }
 
     private fun saveToDoListToFile() {
+        refreshtoDoList()
         try {
             file.bufferedWriter().use { writer ->
-                writer.write("id,taskName,status\n") // Write the header
+                writer.write("id,taskName,createdDate,status\n") // Write the header
                 toDoList.forEach { item ->
-                    writer.write("${item.id},${item.taskName},${item.status}\n")
+                    writer.write("${item.id},${item.taskName},${item.createdDate},${item.status}\n")
                 }
             }
             println("ToDo list saved successfully.")

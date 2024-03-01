@@ -1,12 +1,6 @@
-id,taskName,status
-1,Buy some plants,DONE
-2,Feed suki,DONE
-3,Buy dinner,NOT_DONE
-4,Eat lunch,DONE
-5,Eat dinner,DONE
-6,Go outside,DONE
-7,Another task ,NOT_DONE
-8,Another task ,NOT_DONE
-9,Buy tiles,NOT_DONE
-10,Buy carpet,NOT_DONE
-11,Buy diet coke,NOT_DONE
+id,taskName,createdDate,status
+1,Go for a walk,2024-03-01T16:04:43.20388,NOT_DONE
+2,Eat some cake,2024-03-01T16:04:57.100648,NOT_DONE
+3,Learn Kotlin,2024-03-01T16:05:04.952092,NOT_DONE
+4,Feed Suki,2024-03-01T16:08:56.932709,NOT_DONE
+5,Cook dinner,2024-03-01T16:09:13.004398,NOT_DONE
