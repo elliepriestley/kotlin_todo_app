@@ -10,7 +10,7 @@ interface ToDoRepoInterface {
 
     fun addToDoItem(toDoItem: ToDoItem)
 
-    fun editToDoItemName(id: String, updatedToDoTaskName: String): ToDoItem?
+    fun editToDoItemName(id: String, updatedToDoTaskName: String, editedDate: String): ToDoItem?
 
     fun markToDoItemAsDone(id: String): ToDoItem?
 

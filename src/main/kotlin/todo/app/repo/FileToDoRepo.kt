@@ -8,16 +8,16 @@ class FileToDoRepo : ToDoRepoInterface {
     private val file = File(absolutePath)
     var toDoList: List<ToDoItem> = file.inputStream().bufferedReader().useLines { lines ->
         lines.drop(1).map { line ->
-            val (id, name, createdDate, status) = line.split(",")
-            ToDoItem(id, name, createdDate, ToDoItem.Status.valueOf(status))
+            val (id, name, createdDate, editedDate, status) = line.split(",")
+            ToDoItem(id, name, createdDate, editedDate, ToDoItem.Status.valueOf(status))
         }.toList()
     }
 
     fun refreshtoDoList() {
         toDoList = file.inputStream().bufferedReader().useLines { lines ->
             lines.drop(1).map { line ->
-                val (id, name, createdDate, status) = line.split(",")
-                ToDoItem(id, name, createdDate, ToDoItem.Status.valueOf(status))
+                val (id, name, createdDate, editedDate, status) = line.split(",")
+                ToDoItem(id, name, createdDate, editedDate, ToDoItem.Status.valueOf(status))
             }.toList()
         }
     }
@@ -46,7 +46,7 @@ class FileToDoRepo : ToDoRepoInterface {
     override fun addToDoItem(toDoItem: ToDoItem) {
         refreshtoDoList()
         try {
-            val toDoItemString = "${toDoItem.id},${toDoItem.taskName},${toDoItem.createdDate},${toDoItem.status}\n"
+            val toDoItemString = "${toDoItem.id},${toDoItem.taskName},${toDoItem.createdDate},${toDoItem.editedDate}${toDoItem.status}\n"
             val filePath = "src/resources/todo_list.txt"
             val file = File(filePath)
             file.appendText(toDoItemString)
@@ -57,12 +57,14 @@ class FileToDoRepo : ToDoRepoInterface {
         }
     }
 
-    override fun editToDoItemName(id: String, updatedToDoTaskName: String): ToDoItem? {
+    override fun editToDoItemName(id: String, updatedToDoTaskName: String, editedDate: String): ToDoItem? {
         refreshtoDoList()
         val relevantToDoItem = toDoList.find { it.id == id }
 
         relevantToDoItem?.let { todoItem ->
             todoItem.taskName = updatedToDoTaskName
+            todoItem.editedDate = editedDate
+            println("To do item from repo: $todoItem")
             saveToDoListToFile()
             return todoItem
         }
@@ -100,9 +102,9 @@ class FileToDoRepo : ToDoRepoInterface {
         refreshtoDoList()
         try {
             file.bufferedWriter().use { writer ->
-                writer.write("id,taskName,createdDate,status\n") // Write the header
+                writer.write("id,taskName,createdDate,editedDate,status\n") // Write the header
                 toDoList.forEach { item ->
-                    writer.write("${item.id},${item.taskName},${item.createdDate},${item.status}\n")
+                    writer.write("${item.id},${item.taskName},${item.createdDate},${item.editedDate},${item.status}\n")
                 }
             }
             println("ToDo list saved successfully.")

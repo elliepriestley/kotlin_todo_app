@@ -11,12 +11,16 @@ data class ToDoItem(
     @JsonProperty("createdDate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     val createdDate: String,
+    @JsonProperty("editedDate")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    var editedDate: String? = null,
     var status: Status) {
 
     constructor(id: String, taskName: String, status: Status): this(
         id,
         taskName,
         LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+        null,
         status
     )
     override fun toString(): String {

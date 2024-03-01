@@ -16,6 +16,8 @@ import org.http4k.routing.path
 import org.http4k.routing.routes
 import todo.app.domain.Domain
 import todo.app.repo.ToDoItem
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class HttpAPI(domain: Domain) {
     private val mapper = jacksonObjectMapper().apply {
@@ -40,7 +42,9 @@ class HttpAPI(domain: Domain) {
 
     private fun updateToDoTaskNameAndGenerateJsonResponse(jsonNodeRequestedToPatch: JsonNode, toDoItemId: String?, domain:Domain): Response {
         val taskName = jsonNodeRequestedToPatch.get("taskName").asText()
-        val toDoItem = toDoItemId?.let {domain.editToDoItemName(toDoItemId, taskName) }
+        val editedDate = LocalDateTime.now().format((DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+        val toDoItem = toDoItemId?.let {domain.editToDoItemName(toDoItemId, taskName, editedDate) }
+        println("TOdo item from API: $toDoItem")
         val jsonResponse = mapper.writeValueAsString(toDoItem)
         return Response(OK).body(jsonResponse)
     }
@@ -58,6 +62,7 @@ class HttpAPI(domain: Domain) {
     private fun attemptToUpdateToDoItemAsDone(toDoItemId: String?, domain: Domain): Response {
         val toDoItem = toDoItemId?.let { domain.markToDoItemAsDone(toDoItemId) }
         return if (toDoItem != null) {
+            toDoItem.editedDate = LocalDateTime.now().format((DateTimeFormatter.ISO_LOCAL_DATE_TIME))
             val jsonResponse = mapper.writeValueAsString(toDoItem)
             Response(OK).body(jsonResponse)
         } else {
@@ -68,6 +73,7 @@ class HttpAPI(domain: Domain) {
     private fun attemptToUpdateToDoItemAsNotDone(toDoItemId: String?, domain: Domain): Response {
         val toDoItem = toDoItemId?.let { domain.markToDoItemAsNotDone(toDoItemId) }
         return if (toDoItem != null) {
+            toDoItem.editedDate = LocalDateTime.now().format((DateTimeFormatter.ISO_LOCAL_DATE_TIME))
             val jsonResponse = mapper.writeValueAsString(toDoItem)
             Response(OK).body(jsonResponse)
         } else {
