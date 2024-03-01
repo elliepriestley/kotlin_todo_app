@@ -1,10 +1,10 @@
 id,taskName,status
-1,Learn guitar,NOT_DONE
+1,Buy some plants,DONE
 2,Feed suki,DONE
 3,Buy dinner,NOT_DONE
 4,Eat lunch,DONE
-5,Go for a walk,NOT_DONE
-6,Eat cake,NOT_DONE
+5,Eat dinner,DONE
+6,Go outside,DONE
 7,Another task ,NOT_DONE
 8,Another task ,NOT_DONE
 9,Buy tiles,NOT_DONE
