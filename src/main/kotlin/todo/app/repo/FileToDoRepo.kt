@@ -3,68 +3,41 @@ package todo.app.repo
 import java.io.*
 
 
+import java.io.*
+
 class FileToDoRepo : ToDoRepoInterface {
     private val absolutePath = "/Users/elliepriestley/IdeaProjects/ToDoApp/src/resources/todo_list.txt"
     private val file = File(absolutePath)
-    var toDoList: List<ToDoItem> = file.inputStream().bufferedReader().useLines { lines ->
+    var toDoList: MutableList<ToDoItem> = file.inputStream().bufferedReader().useLines { lines ->
         lines.drop(1).map { line ->
             val (id, name, createdDate, editedDate, status) = line.split(",")
             ToDoItem(id, name, createdDate, editedDate, ToDoItem.Status.valueOf(status))
-        }.toList()
-    }
-
-    fun refreshtoDoList() {
-        toDoList = file.inputStream().bufferedReader().useLines { lines ->
-            lines.drop(1).map { line ->
-                val (id, name, createdDate, editedDate, status) = line.split(",")
-                ToDoItem(id, name, createdDate, editedDate, ToDoItem.Status.valueOf(status))
-            }.toList()
-        }
+        }.toMutableList()
     }
 
     override fun fetchAllToDoItems(): List<ToDoItem> {
-        refreshtoDoList()
         return toDoList
     }
 
     override fun fetchToDoItemsByStatus(status: ToDoItem.Status): List<ToDoItem> {
-        refreshtoDoList()
-        return if (status == ToDoItem.Status.DONE) {
-            toDoList.filter {it.status == ToDoItem.Status.DONE }
-        } else {
-            toDoList.filter { it.status == ToDoItem.Status.NOT_DONE }
-        }
+        return toDoList.filter { it.status == status }
     }
 
     override fun fetchToDoItemById(id: String): ToDoItem? {
-        refreshtoDoList()
-        return toDoList.find { toDoItem ->
-            toDoItem.id == id
-        }
+        return toDoList.find { it.id == id }
     }
 
     override fun addToDoItem(toDoItem: ToDoItem) {
-        refreshtoDoList()
-        try {
-            val toDoItemString = "${toDoItem.id},${toDoItem.taskName},${toDoItem.createdDate},${toDoItem.editedDate}${toDoItem.status}\n"
-            val filePath = "src/resources/todo_list.txt"
-            val file = File(filePath)
-            file.appendText(toDoItemString)
-            println("Succeeded")
-        } catch (error: IOException) {
-            error.printStackTrace()
-            println("failed")
-        }
+        toDoList.add(toDoItem)
+        saveToDoListToFile()
     }
 
     override fun editToDoItemName(id: String, updatedToDoTaskName: String, editedDate: String): ToDoItem? {
-        refreshtoDoList()
         val relevantToDoItem = toDoList.find { it.id == id }
 
         relevantToDoItem?.let { todoItem ->
             todoItem.taskName = updatedToDoTaskName
             todoItem.editedDate = editedDate
-            println("To do item from repo: $todoItem")
             saveToDoListToFile()
             return todoItem
         }
@@ -73,7 +46,6 @@ class FileToDoRepo : ToDoRepoInterface {
     }
 
     override fun markToDoItemAsDone(id: String): ToDoItem? {
-        refreshtoDoList()
         val relevantToDoItem = toDoList.find { it.id == id }
 
         relevantToDoItem?.let { todoItem ->
@@ -86,7 +58,6 @@ class FileToDoRepo : ToDoRepoInterface {
     }
 
     override fun markToDoItemAsNotDone(id: String): ToDoItem? {
-        refreshtoDoList()
         val relevantToDoItem = toDoList.find { it.id == id }
 
         relevantToDoItem?.let { todoItem ->
@@ -99,7 +70,6 @@ class FileToDoRepo : ToDoRepoInterface {
     }
 
     private fun saveToDoListToFile() {
-        refreshtoDoList()
         try {
             file.bufferedWriter().use { writer ->
                 writer.write("id,taskName,createdDate,editedDate,status\n") // Write the header
@@ -115,12 +85,11 @@ class FileToDoRepo : ToDoRepoInterface {
     }
 
     override fun generateIdNumber(): String {
-        refreshtoDoList()
-        val newIdNumber = (toDoList.count()+1).toString()
-        return newIdNumber
+        val generatedIdNumber = (toDoList.count() + 1).toString()
+        return generatedIdNumber
     }
-
 }
+
 
 fun main() {
     val fileRepo = FileToDoRepo()

@@ -4,3 +4,4 @@ id,taskName,createdDate,editedDate,status
 3,Learn Kotlin,2024-03-01T16:05:04.952092,null,NOT_DONE
 4,Feed Suki,2024-03-01T16:08:56.932709,null,NOT_DONE
 5,Cook dinner,2024-03-01T16:09:13.004398,null,NOT_DONE
+6,Skip the gym,2024-03-01T17:19:55.287336,2024-03-01T17:20:07.411082,NOT_DONE
