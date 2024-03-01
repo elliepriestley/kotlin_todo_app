@@ -83,6 +83,23 @@ class HttpAPI(domain: Domain) {
             Response(OK).body(jsonResponse)
         },
 
+        "/todos/status/{status}" bind GET to { req ->
+            val status: String? = req.path("status")
+            when (status) {
+                "NOT_DONE" -> {
+                    val filteredToDoList = domain.getToDosByStatus(ToDoItem.Status.NOT_DONE)
+                    Response(OK).body(mapper.writeValueAsString(filteredToDoList))
+                }
+                "DONE" -> {
+                    val filteredToDoList = domain.getToDosByStatus(ToDoItem.Status.DONE)
+                    Response(OK).body(mapper.writeValueAsString(filteredToDoList))
+                }
+                else -> {
+                    Response(BAD_REQUEST).body("Invalid status type in URL")
+                }
+            }
+        },
+
         "/todos/{id}" bind GET to { req ->
             val toDoItemId: String? = req.path("id")
             val toDoItem = toDoItemId?.let { domain.getToDoById(it) }

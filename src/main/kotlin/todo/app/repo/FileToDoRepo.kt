@@ -26,6 +26,14 @@ class FileToDoRepo : ToDoRepoInterface {
         return toDoList
     }
 
+    override fun fetchToDoItemsByStatus(status: ToDoItem.Status): List<ToDoItem> {
+        return if (status == ToDoItem.Status.DONE) {
+            toDoList.filter {it.status == ToDoItem.Status.DONE }
+        } else {
+            toDoList.filter { it.status == ToDoItem.Status.NOT_DONE }
+        }
+    }
+
     override fun fetchToDoItemById(id: String): ToDoItem? {
         return toDoList.find { toDoItem ->
             toDoItem.id == id
@@ -106,7 +114,4 @@ class FileToDoRepo : ToDoRepoInterface {
 
 fun main() {
     val fileRepo = FileToDoRepo()
-
-
-
 }

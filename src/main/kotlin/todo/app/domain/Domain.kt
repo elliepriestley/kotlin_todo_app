@@ -11,6 +11,10 @@ class Domain(private val toDoRepo: ToDoRepoInterface) {
         return toDoRepo.fetchAllToDoItems()
     }
 
+    fun getToDosByStatus(status: ToDoItem.Status): List<ToDoItem> {
+        return toDoRepo.fetchToDoItemsByStatus(status)
+    }
+
     fun getToDoById(id: String): ToDoItem? {
         return toDoRepo.fetchToDoItemById(id)
     }
@@ -41,6 +45,7 @@ class Domain(private val toDoRepo: ToDoRepoInterface) {
 fun main() {
     val fileRepo = FileToDoRepo()
     val domain = Domain(fileRepo)
+    println(domain.getToDosByStatus(ToDoItem.Status.NOT_DONE))
 
 }
 

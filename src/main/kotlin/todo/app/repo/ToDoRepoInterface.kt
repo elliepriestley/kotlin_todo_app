@@ -4,6 +4,8 @@ interface ToDoRepoInterface {
 
     fun fetchAllToDoItems(): List<ToDoItem>
 
+    fun fetchToDoItemsByStatus(status: ToDoItem.Status): List<ToDoItem>
+
     fun fetchToDoItemById(id: String): ToDoItem?
 
     fun addToDoItem(toDoItem: ToDoItem)
