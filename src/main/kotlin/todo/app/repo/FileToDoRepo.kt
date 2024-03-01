@@ -10,8 +10,8 @@ class FileToDoRepo : ToDoRepoInterface {
     private val file = File(absolutePath)
     var toDoList: MutableList<ToDoItem> = file.inputStream().bufferedReader().useLines { lines ->
         lines.drop(1).map { line ->
-            val (id, name, createdDate, status) = line.split(",")
-            ToDoItem(id, name, createdDate, ToDoItem.Status.valueOf(status))
+            val (id, name, createdDate, editedDate, status) = line.split(",")
+            ToDoItem(id, name, createdDate, editedDate, ToDoItem.Status.valueOf(status))
         }.toMutableList()
     }
 
@@ -32,11 +32,12 @@ class FileToDoRepo : ToDoRepoInterface {
         saveToDoListToFile()
     }
 
-    override fun editToDoItemName(id: String, updatedToDoTaskName: String): ToDoItem? {
+    override fun editToDoItemName(id: String, updatedToDoTaskName: String, editedDate: String): ToDoItem? {
         val relevantToDoItem = toDoList.find { it.id == id }
 
         relevantToDoItem?.let { todoItem ->
             todoItem.taskName = updatedToDoTaskName
+            todoItem.editedDate = editedDate
             saveToDoListToFile()
             return todoItem
         }
@@ -71,9 +72,9 @@ class FileToDoRepo : ToDoRepoInterface {
     private fun saveToDoListToFile() {
         try {
             file.bufferedWriter().use { writer ->
-                writer.write("id,taskName,createdDate,status\n") // Write the header
+                writer.write("id,taskName,createdDate,editedDate,status\n") // Write the header
                 toDoList.forEach { item ->
-                    writer.write("${item.id},${item.taskName},${item.createdDate},${item.status}\n")
+                    writer.write("${item.id},${item.taskName},${item.createdDate},${item.editedDate},${item.status}\n")
                 }
             }
             println("ToDo list saved successfully.")
@@ -84,7 +85,8 @@ class FileToDoRepo : ToDoRepoInterface {
     }
 
     override fun generateIdNumber(): String {
-        return (toDoList.count() + 1).toString()
+        val generatedIdNumber = (toDoList.count() + 1).toString()
+        return generatedIdNumber
     }
 }
 

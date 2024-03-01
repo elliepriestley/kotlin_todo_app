@@ -23,8 +23,9 @@ class Domain(private val toDoRepo: ToDoRepoInterface) {
         toDoRepo.addToDoItem(toDoItem)
     }
 
-    fun editToDoItemName(id: String, updatedToDoTaskName: String): ToDoItem? {
-        return toDoRepo.editToDoItemName(id, updatedToDoTaskName)
+    fun editToDoItemName(id: String, updatedToDoTaskName: String, editedDate: String): ToDoItem? {
+        println("ToDoItem from domain: ${toDoRepo.editToDoItemName(id,updatedToDoTaskName,editedDate)}")
+        return toDoRepo.editToDoItemName(id, updatedToDoTaskName, editedDate)
     }
 
     fun markToDoItemAsDone(id: String): ToDoItem? {
