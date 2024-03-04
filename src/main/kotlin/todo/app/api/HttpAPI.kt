@@ -23,7 +23,7 @@ class HttpAPI(domain: Domain) {
     private val mapper = jacksonObjectMapper().apply {
         enable(SerializationFeature.INDENT_OUTPUT)
     }
-    private fun whatPropertyNeedsPatching(jsonNode: JsonNode): String {
+    private fun returnWhichPropertyNeedsPatching(jsonNode: JsonNode): String {
         return when {
             jsonNode.has("taskName") && jsonNode.has("status") -> {
                 "Request To Update Both"
@@ -148,7 +148,7 @@ class HttpAPI(domain: Domain) {
             }
 
             if (jsonNodeRequestedToPatch != null) {
-                when (whatPropertyNeedsPatching(jsonNodeRequestedToPatch)) {
+                when (returnWhichPropertyNeedsPatching(jsonNodeRequestedToPatch)) {
                     "taskName" -> updateToDoTaskNameAndGenerateJsonResponse(jsonNodeRequestedToPatch, toDoItemId, domain)
                     "status" -> updateToDoTaskStatusAndGenerateJsonResponse(jsonNodeRequestedToPatch, toDoItemId, domain)
                     "Request To Update Both" -> Response(BAD_REQUEST).body("Invalid Request. You may request to change one field per request")

@@ -6,8 +6,8 @@ import java.io.*
 import java.io.*
 
 class FileToDoRepo : ToDoRepoInterface {
-    private val absolutePath = "/Users/elliepriestley/IdeaProjects/ToDoApp/src/resources/todo_list.txt"
-    private val file = File(absolutePath)
+    private val relativePath = "src/resources/todo_list.txt"
+    private val file = File(relativePath)
     var toDoList: MutableList<ToDoItem> = file.inputStream().bufferedReader().useLines { lines ->
         lines.drop(1).map { line ->
             val (id, name, createdDate, editedDate, status) = line.split(",")
