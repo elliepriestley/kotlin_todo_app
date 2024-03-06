@@ -4,6 +4,7 @@ import todo.app.repo.FileToDoRepo
 import todo.app.todomodels.ToDoItem
 import todo.app.repo.ToDoRepoInterface
 import todo.app.todomodels.GetAllToDoModel
+import todo.app.todomodels.GetToDoByStatusModel
 
 
 class ReadDomain(private val toDoRepo: ToDoRepoInterface) {
@@ -16,8 +17,11 @@ class ReadDomain(private val toDoRepo: ToDoRepoInterface) {
 
     }
 
-    fun getToDosByStatus(status: ToDoItem.Status): List<ToDoItem> {
-        return toDoRepo.fetchToDoItemsByStatus(status)
+    fun getToDosByStatus(status: ToDoItem.Status): List<GetToDoByStatusModel> {
+        val listOfToDoItems = toDoRepo.fetchToDoItemsByStatus(status)
+        return listOfToDoItems.map { toDoItem ->
+            GetToDoByStatusModel(toDoItem.id, toDoItem.taskName)
+        }
     }
 
     fun getToDoById(id: String): ToDoItem? {
@@ -33,7 +37,7 @@ class ReadDomain(private val toDoRepo: ToDoRepoInterface) {
 fun main() {
     val fileRepo = FileToDoRepo()
     val readDomain = ReadDomain(fileRepo)
-    println(readDomain.getAllTodos())
+    println(readDomain.getToDosByStatus(ToDoItem.Status.DONE))
 
 }
 
