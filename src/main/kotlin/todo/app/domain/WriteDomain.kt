@@ -1,7 +1,7 @@
 package todo.app.domain
 
 import todo.app.repo.FileToDoRepo
-import todo.app.repo.ToDoItem
+import todo.app.todomodels.ToDoItem
 import todo.app.repo.ToDoRepoInterface
 
 class WriteDomain(private val toDoRepo: ToDoRepoInterface) {

@@ -1,5 +1,7 @@
 package todo.app.repo
 
+import todo.app.todomodels.ToDoItem
+
 interface ToDoRepoInterface {
 
     fun fetchAllToDoItems(): List<ToDoItem>

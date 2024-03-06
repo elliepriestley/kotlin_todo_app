@@ -1,14 +1,19 @@
 package todo.app.domain
 
 import todo.app.repo.FileToDoRepo
-import todo.app.repo.ToDoItem
+import todo.app.todomodels.ToDoItem
 import todo.app.repo.ToDoRepoInterface
+import todo.app.todomodels.GetAllToDoModel
 
 
 class ReadDomain(private val toDoRepo: ToDoRepoInterface) {
 
-    fun getAllTodos(): List<ToDoItem> {
-        return toDoRepo.fetchAllToDoItems()
+    fun getAllTodos(): List<GetAllToDoModel> {
+        val listOfToDoItems = toDoRepo.fetchAllToDoItems()
+        return listOfToDoItems.map { toDoItem  ->
+            GetAllToDoModel(id = toDoItem.id, taskName = toDoItem.taskName, status = toDoItem.status)
+        }
+
     }
 
     fun getToDosByStatus(status: ToDoItem.Status): List<ToDoItem> {
@@ -28,7 +33,7 @@ class ReadDomain(private val toDoRepo: ToDoRepoInterface) {
 fun main() {
     val fileRepo = FileToDoRepo()
     val readDomain = ReadDomain(fileRepo)
-    println(readDomain.getToDosByStatus(ToDoItem.Status.NOT_DONE))
+    println(readDomain.getAllTodos())
 
 }
 

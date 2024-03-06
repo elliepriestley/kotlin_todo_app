@@ -1,8 +1,6 @@
 package todo.app.repo
 
-import java.io.*
-
-
+import todo.app.todomodels.ToDoItem
 import java.io.*
 
 class FileToDoRepo : ToDoRepoInterface {
