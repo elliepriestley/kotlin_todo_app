@@ -31,14 +31,15 @@
 
 base properties of events: eventId, eventName, eventCreatedDate, eventCreator, analytics data
 
+### EXAMPLE:
+
 EVENTS LOG
-- TODO item created: id1 (id, taskName)
+- ToDo item created: id1 (id, taskName)
 - Todo item created: id2 (id, taskName)
 - Todo item name updated :id1 (id, taskName)
 - Todo item name updated :id1 (id, taskName)
 - Todo item marked as done id2 (id)
 - Todo item marked as done id1 (id)
-- 
-- 
-- state for id1: replay all events and update the model.
+
+- To calculate the state for id1: replay all id1 events and update the model.
 - Domain method - get details of single todoItem. - create empty ToDoItem, process first event, update todoItem accordingly. etc. etc. 

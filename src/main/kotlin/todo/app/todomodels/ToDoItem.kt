@@ -1,4 +1,4 @@
-package todo.app.repo
+package todo.app.todomodels
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -14,7 +14,8 @@ data class ToDoItem(
     @JsonProperty("editedDate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     var editedDate: String? = null,
-    var status: Status) {
+    var status: Status
+) {
 
     constructor(id: String, taskName: String, status: Status): this(
         id,

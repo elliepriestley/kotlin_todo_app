@@ -1,10 +1,8 @@
 package todo.app
 
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import todo.app.domain.Domain
 
-class DomainTest {
+class ReadDomainTest {
 
     @Test
     fun `Test that addNote method successfully adds a note to Task list`() {
