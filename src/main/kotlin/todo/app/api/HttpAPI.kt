@@ -3,6 +3,8 @@ package todo.app.api
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.natpryce.map
+import com.natpryce.recover
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method.PATCH
 import org.http4k.core.Method.GET
@@ -108,14 +110,14 @@ class HttpAPI(readDomain: ReadDomain, writeDomain: WriteDomain) {
         },
 
         "/todos/{id}" bind GET to { req ->
-            val toDoItemId: String? = req.path("id")
-            val toDoItem = toDoItemId?.let { readDomain.getToDoById(it) }
+            val toDoItemId: String = req.path("id") ?: ""
+            val toDoItem = toDoItemId.let { readDomain.getToDoById(it) }
 
-            if (toDoItem != null) {
-                val jsonResponse = mapper.writeValueAsString(toDoItem)
+            toDoItem.map {
+                val jsonResponse = mapper.writeValueAsString(it)
                 Response(OK).body(jsonResponse)
-            } else {
-                Response(NOT_FOUND).body("To do item not found")
+            }.recover {
+                Response(NOT_FOUND).body(it.toString())
             }
         },
 
