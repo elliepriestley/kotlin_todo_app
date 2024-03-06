@@ -4,20 +4,7 @@ import todo.app.repo.FileToDoRepo
 import todo.app.repo.ToDoItem
 import todo.app.repo.ToDoRepoInterface
 
-
-class Domain(private val toDoRepo: ToDoRepoInterface) {
-
-    fun getAllTodos(): List<ToDoItem> {
-        return toDoRepo.fetchAllToDoItems()
-    }
-
-    fun getToDosByStatus(status: ToDoItem.Status): List<ToDoItem> {
-        return toDoRepo.fetchToDoItemsByStatus(status)
-    }
-
-    fun getToDoById(id: String): ToDoItem? {
-        return toDoRepo.fetchToDoItemById(id)
-    }
+class WriteDomain(private val toDoRepo: ToDoRepoInterface) {
 
     fun addToDoItem(toDoItem: ToDoItem) {
         toDoRepo.addToDoItem(toDoItem)
@@ -33,26 +20,12 @@ class Domain(private val toDoRepo: ToDoRepoInterface) {
 
     }
 
-    fun markToDoItemAsNotDone(id: String):ToDoItem? {
+    fun markToDoItemAsNotDone(id: String): ToDoItem? {
         return toDoRepo.markToDoItemAsNotDone(id)
     }
-
-    fun generateNewIdNumber(): String {
-        return toDoRepo.generateIdNumber()
-    }
-
-
 }
+
 fun main() {
     val fileRepo = FileToDoRepo()
-    val domain = Domain(fileRepo)
-    println(domain.getToDosByStatus(ToDoItem.Status.NOT_DONE))
-
+    val writeDomain = WriteDomain(fileRepo)
 }
-
-
-
-
-
-
-
