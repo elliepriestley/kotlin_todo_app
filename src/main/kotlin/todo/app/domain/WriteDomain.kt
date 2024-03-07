@@ -20,14 +20,18 @@ class WriteDomain(private val toDoRepo: ToDoRepoInterface, private val appendEve
 
     fun editToDoItemName(taskId: UUID, updatedToDoTaskName: String, editedDate: String): ToDoItem? {
         val todoItem = toDoRepo.editToDoItemName(taskId, updatedToDoTaskName, editedDate)
-        val event = Event(generateID(), EventName.TODO_ITEM_NAME_UPDATED, "ellie.prietsley", taskId, updatedToDoTaskName)
+        val event = Event(generateID(), EventName.TODO_ITEM_NAME_UPDATED, "ellie.priestley", taskId, updatedToDoTaskName)
         appendEventRepo.appendEvent(event)
         return todoItem
     }
 
-    fun markToDoItemAsDone(id: UUID): ToDoItem? {
-        return toDoRepo.markToDoItemAsDone(id)
-
+    fun markToDoItemAsDone(taskId: UUID): ToDoItem? {
+        val toDoItem = toDoRepo.markToDoItemAsDone(taskId)
+        if (toDoItem != null) {
+            val event = Event(generateID(), EventName.TODO_ITEM_MARKED_AS_DONE, "ellie.priestley", taskId, null)
+            appendEventRepo.appendEvent(event)
+        }
+        return toDoItem
     }
 
     fun markToDoItemAsNotDone(id: UUID): ToDoItem? {

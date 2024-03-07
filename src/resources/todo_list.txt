@@ -1,2 +1,2 @@
 id,taskName,createdDate,editedDate,status
-ffb13047-9ac1-40dd-9942-fa1da0b041f2,Walk the duck,2024-03-07T13:50:18.177792,2024-03-07T15:28:17.291837,NOT_DONE
+ffb13047-9ac1-40dd-9942-fa1da0b041f2,Walk the duck,2024-03-07T13:50:18.177792,2024-03-07T15:28:17.291837,DONE
