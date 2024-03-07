@@ -34,8 +34,13 @@ class WriteDomain(private val toDoRepo: ToDoRepoInterface, private val appendEve
         return toDoItem
     }
 
-    fun markToDoItemAsNotDone(id: UUID): ToDoItem? {
-        return toDoRepo.markToDoItemAsNotDone(id)
+    fun markToDoItemAsNotDone(taskId: UUID): ToDoItem? {
+        val toDoItem = toDoRepo.markToDoItemAsNotDone(taskId)
+        if (toDoItem != null) {
+            val event = Event(generateID(), EventName.TODO_ITEM_MARKED_AS_NOT_DONE, "ellie.priestley", taskId, null)
+            appendEventRepo.appendEvent(event)
+        }
+        return toDoItem
     }
 
     private fun generateID(): UUID {
