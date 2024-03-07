@@ -8,12 +8,14 @@ import org.http4k.server.asServer
 import todo.app.api.HttpAPI
 import todo.app.domain.ReadDomain
 import todo.app.domain.WriteDomain
+import todo.app.repo.FileAppendEventRepo
 import todo.app.repo.FileToDoRepo
 
 fun main() {
     val taskRepo = FileToDoRepo()
     val readDomain = ReadDomain(taskRepo)
-    val writeDomain = WriteDomain(taskRepo)
+    val eventRepo = FileAppendEventRepo()
+    val writeDomain = WriteDomain(taskRepo, eventRepo)
     val api = HttpAPI(readDomain, writeDomain)
     val printingApp: HttpHandler = DebuggingFilters.PrintRequest().then(api.app)
 

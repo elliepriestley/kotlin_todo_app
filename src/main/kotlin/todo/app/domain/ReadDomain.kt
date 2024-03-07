@@ -6,6 +6,7 @@ import todo.app.repo.ToDoRepoInterface
 import todo.app.todomodels.GetAllToDoModel
 import todo.app.todomodels.GetToDoByIdModel
 import todo.app.todomodels.GetToDoByStatusModel
+import java.util.*
 
 
 class ReadDomain(private val toDoRepo: ToDoRepoInterface) {
@@ -25,22 +26,20 @@ class ReadDomain(private val toDoRepo: ToDoRepoInterface) {
         }
     }
 
-    fun getToDoById(id: String): GetToDoByIdModel? {
+    fun getToDoById(id: UUID): GetToDoByIdModel? {
         val toDoItem = toDoRepo.fetchToDoItemById(id)
         val toDoItemWithCorrectStructure = toDoItem?.let { GetToDoByIdModel(toDoItem.taskName, it.status) }
         return toDoItemWithCorrectStructure
     }
 
-    fun generateNewIdNumber(): String {
-        return toDoRepo.generateIdNumber()
+    fun generateNewIdNumber(): UUID {
+        return UUID.randomUUID()
     }
 
 
 }
 fun main() {
-    val fileRepo = FileToDoRepo()
-    val readDomain = ReadDomain(fileRepo)
-    println(readDomain.getToDoById("8"))
+
 
 }
 

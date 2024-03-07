@@ -1,13 +1,16 @@
 package todo.app.eventmodel
 
+import java.util.*
+
 class Event(
-    val eventId: String,
+    val eventId: UUID,
     val eventName: EventName,
     val eventCreatedDate: String,
-    val eventCreator: String
+    val eventCreator: String,
+    val taskId: UUID
 ) {
     override fun toString(): String {
-        return "Event(eventId=$eventId, eventName=$eventName, eventCreatedDate=$eventCreatedDate, eventCreator=$eventCreator)"
+        return "Event(eventId=$eventId, eventName=$eventName, eventCreatedDate=$eventCreatedDate, eventCreator=$eventCreator, taskId=$taskId)"
     }
 }
 

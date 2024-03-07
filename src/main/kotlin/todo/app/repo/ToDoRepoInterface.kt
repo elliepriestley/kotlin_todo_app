@@ -1,6 +1,7 @@
 package todo.app.repo
 
 import todo.app.todomodels.ToDoItem
+import java.util.*
 
 interface ToDoRepoInterface {
 
@@ -8,17 +9,14 @@ interface ToDoRepoInterface {
 
     fun fetchToDoItemsByStatus(status: ToDoItem.Status): List<ToDoItem>
 
-    fun fetchToDoItemById(id: String): ToDoItem?
+    fun fetchToDoItemById(id: UUID): ToDoItem?
 
     fun addToDoItem(toDoItem: ToDoItem)
 
-    fun editToDoItemName(id: String, updatedToDoTaskName: String, editedDate: String): ToDoItem?
+    fun editToDoItemName(id: UUID, updatedToDoTaskName: String, editedDate: String): ToDoItem?
 
-    fun markToDoItemAsDone(id: String): ToDoItem?
+    fun markToDoItemAsDone(id: UUID): ToDoItem?
 
-    fun markToDoItemAsNotDone(id: String): ToDoItem?
-
-    fun generateIdNumber(): String
-
+    fun markToDoItemAsNotDone(id: UUID): ToDoItem?
 
 }

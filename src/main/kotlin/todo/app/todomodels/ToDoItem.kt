@@ -4,9 +4,10 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 data class ToDoItem(
-    val id: String,
+    val id: UUID,
     var taskName: String,
     @JsonProperty("createdDate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
@@ -17,7 +18,7 @@ data class ToDoItem(
     var status: Status
 ) {
 
-    constructor(id: String, taskName: String, status: Status): this(
+    constructor(id: UUID, taskName: String, status: Status): this(
         id,
         taskName,
         LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),

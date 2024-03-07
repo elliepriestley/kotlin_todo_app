@@ -2,6 +2,7 @@ package todo.app.repo
 
 import todo.app.todomodels.ToDoItem
 import java.io.*
+import java.util.*
 
 class FileToDoRepo : ToDoRepoInterface {
     private val relativePath = "src/resources/todo_list.txt"
@@ -9,7 +10,7 @@ class FileToDoRepo : ToDoRepoInterface {
     var toDoList: MutableList<ToDoItem> = file.inputStream().bufferedReader().useLines { lines ->
         lines.drop(1).map { line ->
             val (id, name, createdDate, editedDate, status) = line.split(",")
-            ToDoItem(id, name, createdDate, editedDate, ToDoItem.Status.valueOf(status))
+            ToDoItem(UUID.fromString(id), name, createdDate, editedDate, ToDoItem.Status.valueOf(status))
         }.toMutableList()
     }
 
@@ -21,7 +22,7 @@ class FileToDoRepo : ToDoRepoInterface {
         return toDoList.filter { it.status == status }
     }
 
-    override fun fetchToDoItemById(id: String): ToDoItem? {
+    override fun fetchToDoItemById(id: UUID): ToDoItem? {
         return toDoList.find { it.id == id }
     }
 
@@ -30,7 +31,7 @@ class FileToDoRepo : ToDoRepoInterface {
         saveToDoListToFile()
     }
 
-    override fun editToDoItemName(id: String, updatedToDoTaskName: String, editedDate: String): ToDoItem? {
+    override fun editToDoItemName(id: UUID, updatedToDoTaskName: String, editedDate: String): ToDoItem? {
         val relevantToDoItem = toDoList.find { it.id == id }
 
         relevantToDoItem?.let { todoItem ->
@@ -43,7 +44,7 @@ class FileToDoRepo : ToDoRepoInterface {
         return null
     }
 
-    override fun markToDoItemAsDone(id: String): ToDoItem? {
+    override fun markToDoItemAsDone(id: UUID): ToDoItem? {
         val relevantToDoItem = toDoList.find { it.id == id }
 
         relevantToDoItem?.let { todoItem ->
@@ -55,7 +56,7 @@ class FileToDoRepo : ToDoRepoInterface {
         return null
     }
 
-    override fun markToDoItemAsNotDone(id: String): ToDoItem? {
+    override fun markToDoItemAsNotDone(id: UUID): ToDoItem? {
         val relevantToDoItem = toDoList.find { it.id == id }
 
         relevantToDoItem?.let { todoItem ->
@@ -82,13 +83,8 @@ class FileToDoRepo : ToDoRepoInterface {
         }
     }
 
-    override fun generateIdNumber(): String {
-        val generatedIdNumber = (toDoList.count() + 1).toString()
-        return generatedIdNumber
-    }
 }
 
 
 fun main() {
-    val fileRepo = FileToDoRepo()
 }

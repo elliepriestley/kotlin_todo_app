@@ -1,7 +1,9 @@
 package todo.app.todomodels
 
+import java.util.UUID
+
 class GetToDoByStatusModel(
-    val id: String,
+    val id: UUID,
     val taskName: String,
 
 ) {

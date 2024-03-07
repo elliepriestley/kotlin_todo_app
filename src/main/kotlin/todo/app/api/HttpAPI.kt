@@ -19,6 +19,7 @@ import todo.app.domain.WriteDomain
 import todo.app.todomodels.ToDoItem
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 class HttpAPI(readDomain: ReadDomain, writeDomain: WriteDomain) {
     private val mapper = jacksonObjectMapper().apply {
@@ -44,7 +45,7 @@ class HttpAPI(readDomain: ReadDomain, writeDomain: WriteDomain) {
     private fun updateToDoTaskNameAndGenerateJsonResponse(jsonNodeRequestedToPatch: JsonNode, toDoItemId: String?, writeDomain: WriteDomain): Response {
         val taskName = jsonNodeRequestedToPatch.get("taskName").asText()
         val editedDate = LocalDateTime.now().format((DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-        val toDoItem = toDoItemId?.let {writeDomain.editToDoItemName(toDoItemId, taskName, editedDate) }
+        val toDoItem = toDoItemId?.let {writeDomain.editToDoItemName(UUID.fromString(toDoItemId), taskName, editedDate) }
         println("TOdo item from API: $toDoItem")
         val jsonResponse = mapper.writeValueAsString(toDoItem)
         return Response(OK).body(jsonResponse)
@@ -61,7 +62,7 @@ class HttpAPI(readDomain: ReadDomain, writeDomain: WriteDomain) {
     }
 
     private fun attemptToUpdateToDoItemAsDone(toDoItemId: String?, writeDomain: WriteDomain): Response {
-        val toDoItem = toDoItemId?.let { writeDomain.markToDoItemAsDone(toDoItemId) }
+        val toDoItem = toDoItemId?.let { writeDomain.markToDoItemAsDone(UUID.fromString(toDoItemId)) }
         return if (toDoItem != null) {
             toDoItem.editedDate = LocalDateTime.now().format((DateTimeFormatter.ISO_LOCAL_DATE_TIME))
             val jsonResponse = mapper.writeValueAsString(toDoItem)
@@ -72,7 +73,7 @@ class HttpAPI(readDomain: ReadDomain, writeDomain: WriteDomain) {
     }
 
     private fun attemptToUpdateToDoItemAsNotDone(toDoItemId: String?, writeDomain: WriteDomain): Response {
-        val toDoItem = toDoItemId?.let { writeDomain.markToDoItemAsNotDone(toDoItemId) }
+        val toDoItem = toDoItemId?.let { writeDomain.markToDoItemAsNotDone(UUID.fromString(toDoItemId)) }
         return if (toDoItem != null) {
             toDoItem.editedDate = LocalDateTime.now().format((DateTimeFormatter.ISO_LOCAL_DATE_TIME))
             val jsonResponse = mapper.writeValueAsString(toDoItem)
@@ -109,7 +110,7 @@ class HttpAPI(readDomain: ReadDomain, writeDomain: WriteDomain) {
 
         "/todos/{id}" bind GET to { req ->
             val toDoItemId: String? = req.path("id")
-            val toDoItem = toDoItemId?.let { readDomain.getToDoById(it) }
+            val toDoItem = toDoItemId?.let { readDomain.getToDoById(UUID.fromString(it)) }
 
             if (toDoItem != null) {
                 val jsonResponse = mapper.writeValueAsString(toDoItem)
