@@ -1,5 +1,6 @@
 package todo.app.domain
 
+import todo.app.eventmodel.Event
 import todo.app.eventmodel.EventName
 import todo.app.repo.AppendEventRepoInterface
 import todo.app.repo.FileAppendEventRepo
@@ -15,12 +16,17 @@ import java.util.*
 class ReadDomain(private val toDoRepo: ToDoRepoInterface, private val eventsRepo: AppendEventRepoInterface) {
 
     fun getAllTodos(): List<GetAllToDoModel> {
-        val listOfToDoItems = toDoRepo.fetchAllToDoItems()
-        return listOfToDoItems.map { toDoItem  ->
+        var listOfProjectedToDoItems = mutableListOf<ToDoItem>()
+        val eventsList = eventsRepo.fetchAllEvents()
+        val uniqueListOfToDos = eventsList.distinctBy { it.taskId }
+        uniqueListOfToDos.forEach {toDoItem ->
+            val projectedToDoItem = createProjectedToDoItem(toDoItem.taskId, eventsList)
+            listOfProjectedToDoItems.add(projectedToDoItem)
+        }
+
+        return listOfProjectedToDoItems.map { toDoItem  ->
             GetAllToDoModel(id = toDoItem.id, taskName = toDoItem.taskName, status = toDoItem.status)
         }
-//        val eventsList = eventsRepo.fetchEvents()
-//         in eventsList) {
 
         }
 
@@ -34,9 +40,19 @@ class ReadDomain(private val toDoRepo: ToDoRepoInterface, private val eventsRepo
     }
 
     fun getToDoById(taskId: UUID): GetToDoByIdModel? {
-        val events = eventsRepo.fetchEventsByTaskId(taskId)
+        val eventsList = eventsRepo.fetchEventsByTaskId(taskId)
+        val projectedToDoItem = createProjectedToDoItem(taskId, eventsList)
+        val toDoItemInCorrectFormat = projectedToDoItem.let { GetToDoByIdModel(it.taskName, it.status) }
+        return toDoItemInCorrectFormat
+    }
+
+    fun generateNewIdNumber(): UUID {
+        return UUID.randomUUID()
+    }
+
+    private fun createProjectedToDoItem(taskId: UUID, eventsList: List<Event>): ToDoItem {
         var projectedToDoItem = ToDoItem(taskId, taskName = "filler", ToDoItem.Status.NOT_DONE)
-        events.forEach { event ->
+        eventsList.forEach { event ->
             when (event.eventName) {
                 EventName.TODO_ITEM_CREATED -> projectedToDoItem.taskName = event.taskName!!
                 EventName.TODO_ITEM_NAME_UPDATED -> projectedToDoItem.taskName = event.taskName!!
@@ -44,12 +60,8 @@ class ReadDomain(private val toDoRepo: ToDoRepoInterface, private val eventsRepo
                 EventName.TODO_ITEM_MARKED_AS_NOT_DONE -> projectedToDoItem.status = ToDoItem.Status.NOT_DONE
             }
         }
-        val toDoItemInCorrectFormat = projectedToDoItem.let { GetToDoByIdModel(it.taskName, it.status) }
-        return toDoItemInCorrectFormat
-    }
+        return projectedToDoItem
 
-    fun generateNewIdNumber(): UUID {
-        return UUID.randomUUID()
     }
 
 
@@ -59,7 +71,7 @@ fun main() {
     val eventsRepo = FileAppendEventRepo()
     val todoRepo = FileToDoRepo()
     val readDomain = ReadDomain(todoRepo, eventsRepo)
-    println(readDomain.getToDoById(UUID.fromString("ffb13047-9ac1-40dd-9942-fa1da0b041f2")))
+    println(readDomain.getAllTodos())
 
 
 }
