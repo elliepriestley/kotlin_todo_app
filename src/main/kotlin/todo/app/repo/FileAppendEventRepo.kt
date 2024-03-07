@@ -29,6 +29,18 @@ class FileAppendEventRepo: AppendEventRepoInterface {
         return event
     }
 
+    override fun fetchAllEvents(): List<Event> {
+        return eventItemsList
+    }
+
+    override fun fetchEventsByTaskId(taskId: UUID): List<Event> {
+        val eventsList = eventItemsList.filter { event ->
+            event.taskId == taskId
+        }
+        return eventsList
+
+    }
+
     private fun saveEventListToFile() {
         try {
             file.bufferedWriter().use { writer ->

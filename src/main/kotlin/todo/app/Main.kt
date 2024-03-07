@@ -13,8 +13,8 @@ import todo.app.repo.FileToDoRepo
 
 fun main() {
     val taskRepo = FileToDoRepo()
-    val readDomain = ReadDomain(taskRepo)
     val eventRepo = FileAppendEventRepo()
+    val readDomain = ReadDomain(taskRepo, eventRepo)
     val writeDomain = WriteDomain(taskRepo, eventRepo)
     val api = HttpAPI(readDomain, writeDomain)
     val printingApp: HttpHandler = DebuggingFilters.PrintRequest().then(api.app)
