@@ -11,9 +11,10 @@ class FileAppendEventRepo: AppendEventRepoInterface {
     private val file = File(relativePath)
     var eventItemsList: MutableList<Event> = file.inputStream().bufferedReader().useLines { lines ->
         lines.drop(1).mapNotNull { line ->
-            if (line.split(",").size >= 5) {
-                val (eventId, eventName, eventCreatedDate, eventCreator, taskId) = line.split(",")
-                Event(UUID.fromString(eventId), EventName.valueOf(eventName), eventCreatedDate, eventCreator, UUID.fromString(taskId))
+            val splitLine = line.split(",")
+            if (splitLine.size >= 6) {
+                val (eventId, eventName, eventCreatedDate, eventCreator, taskId) = splitLine
+                Event(UUID.fromString(eventId), EventName.valueOf(eventName), eventCreatedDate, eventCreator, UUID.fromString(taskId), splitLine[5])
             } else {
                 null
             }
@@ -31,9 +32,9 @@ class FileAppendEventRepo: AppendEventRepoInterface {
     private fun saveEventListToFile() {
         try {
             file.bufferedWriter().use { writer ->
-                writer.write("eventId,eventName,eventCreatedDate,eventCreator,taskId\n")
+                writer.write("eventId,eventName,eventCreatedDate,eventCreator,taskId,taskName\n")
                 eventItemsList.forEach { event ->
-                    writer.write("${event.eventId},${event.eventName},${event.eventCreatedDate},${event.eventCreator},${event.taskId}\n")
+                    writer.write("${event.eventId},${event.eventName},${event.eventCreatedDate},${event.eventCreator},${event.taskId},${event.taskName}\n")
                 }
             }
             println("Events saved successfully.")

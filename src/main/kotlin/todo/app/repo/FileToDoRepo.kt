@@ -34,38 +34,46 @@ class FileToDoRepo : ToDoRepoInterface {
     override fun editToDoItemName(id: UUID, updatedToDoTaskName: String, editedDate: String): ToDoItem? {
         val relevantToDoItem = toDoList.find { it.id == id }
 
-        relevantToDoItem?.let { todoItem ->
-            todoItem.taskName = updatedToDoTaskName
-            todoItem.editedDate = editedDate
-            saveToDoListToFile()
-            return todoItem
+        val todoItem = relevantToDoItem?.let { todoItem ->
+                todoItem.taskName = updatedToDoTaskName
+                todoItem.editedDate = editedDate
+                saveToDoListToFile()
+                todoItem
+            }
+
+        if (todoItem == null)  {
+            println("ToDo item with ID $id not found.")
         }
-        println("ToDo item with ID $id not found.")
-        return null
+        return todoItem
     }
 
     override fun markToDoItemAsDone(id: UUID): ToDoItem? {
         val relevantToDoItem = toDoList.find { it.id == id }
 
-        relevantToDoItem?.let { todoItem ->
+        val toDoItem = relevantToDoItem?.let { todoItem ->
             todoItem.status = ToDoItem.Status.DONE
             saveToDoListToFile()
-            return todoItem
+            todoItem
         }
-        println("ToDo item with ID $id not found.")
-        return null
+
+        if (toDoItem == null)  {
+            println("ToDo item with ID $id not found.")
+        }
+        return toDoItem
     }
 
     override fun markToDoItemAsNotDone(id: UUID): ToDoItem? {
         val relevantToDoItem = toDoList.find { it.id == id }
 
-        relevantToDoItem?.let { todoItem ->
+        val toDoItem = relevantToDoItem?.let { todoItem ->
             todoItem.status = ToDoItem.Status.NOT_DONE
             saveToDoListToFile()
-            return todoItem
+            todoItem
         }
-        println("ToDo item with ID $id not found.")
-        return null
+        if (toDoItem == null)  {
+            println("ToDo item with ID $id not found.")
+        }
+        return toDoItem
     }
 
     private fun saveToDoListToFile() {
