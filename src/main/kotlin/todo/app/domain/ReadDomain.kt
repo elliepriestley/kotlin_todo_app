@@ -16,20 +16,13 @@ import java.util.*
 class ReadDomain(private val toDoRepo: ToDoRepoInterface, private val eventsRepo: AppendEventRepoInterface) {
 
     fun getAllTodos(): List<GetAllToDoModel> {
-        var listOfProjectedToDoItems = mutableListOf<ToDoItem>()
-        val eventsList = eventsRepo.fetchAllEvents()
-        val uniqueListOfToDos = eventsList.distinctBy { it.taskId }
-        uniqueListOfToDos.forEach {toDoItem ->
-            val projectedToDoItem = createProjectedToDoItem(toDoItem.taskId, eventsList)
-            listOfProjectedToDoItems.add(projectedToDoItem)
-        }
+        val listOfUniqueToDoEvents = eventsRepo.fetchAllEvents().distinctBy { it.taskId }
 
-        return listOfProjectedToDoItems.map { toDoItem  ->
+        return listOfUniqueToDoEvents.map { event ->
+            val toDoItem = getToDoByIdFullToDoModel(event.taskId)
             GetAllToDoModel(id = toDoItem.id, taskName = toDoItem.taskName, status = toDoItem.status)
         }
-
-        }
-
+    }
 
 
     fun getToDosByStatus(status: ToDoItem.Status): List<GetToDoByStatusModel> {
@@ -46,12 +39,18 @@ class ReadDomain(private val toDoRepo: ToDoRepoInterface, private val eventsRepo
         return toDoItemInCorrectFormat
     }
 
+    private fun getToDoByIdFullToDoModel(taskId: UUID): ToDoItem {
+        val eventsList = eventsRepo.fetchEventsByTaskId(taskId)
+        val projectedToDoItem = createProjectedToDoItem(taskId, eventsList)
+        return projectedToDoItem
+    }
+
     fun generateNewIdNumber(): UUID {
         return UUID.randomUUID()
     }
 
     private fun createProjectedToDoItem(taskId: UUID, eventsList: List<Event>): ToDoItem {
-        var projectedToDoItem = ToDoItem(taskId, taskName = "filler", ToDoItem.Status.NOT_DONE)
+        val projectedToDoItem = ToDoItem(taskId, taskName = "filler", ToDoItem.Status.NOT_DONE)
         eventsList.forEach { event ->
             when (event.eventName) {
                 EventName.TODO_ITEM_CREATED -> projectedToDoItem.taskName = event.taskName!!

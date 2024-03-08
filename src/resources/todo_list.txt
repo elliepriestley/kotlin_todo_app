@@ -1,2 +1,4 @@
 id,taskName,createdDate,editedDate,status
 ffb13047-9ac1-40dd-9942-fa1da0b041f2,Make some dinner,2024-03-07T13:50:18.177792,2024-03-07T16:20:25.213816,NOT_DONE
+dc259582-0299-42f2-816f-6c0f33efb2d7,Pick up paint samples from B&Q,2024-03-08T10:27:11.918766,2024-03-08T10:29:57.709722,DONE
+f50ba4e1-25d2-4614-849e-a89b33120022,Book spin class for next week,2024-03-08T10:30:36.236124,null,NOT_DONE
