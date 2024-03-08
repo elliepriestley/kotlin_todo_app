@@ -6,14 +6,13 @@ import todo.app.repo.AppendEventRepoInterface
 import todo.app.repo.FileAppendEventRepo
 import todo.app.repo.FileToDoRepo
 import todo.app.todomodels.ToDoItem
-import todo.app.repo.ToDoRepoInterface
 import todo.app.todomodels.GetAllToDoModel
 import todo.app.todomodels.GetToDoByIdModel
 import todo.app.todomodels.GetToDoByStatusModel
 import java.util.*
 
 
-class ReadDomain(private val toDoRepo: ToDoRepoInterface, private val eventsRepo: AppendEventRepoInterface) {
+class ReadDomain(private val eventsRepo: AppendEventRepoInterface) {
 
     fun getAllTodos(): List<GetAllToDoModel> {
         val listOfUniqueToDoEvents = eventsRepo.fetchAllEvents().distinctBy { it.taskId }
@@ -65,10 +64,8 @@ class ReadDomain(private val toDoRepo: ToDoRepoInterface, private val eventsRepo
 
 }
 fun main() {
-
     val eventsRepo = FileAppendEventRepo()
-    val todoRepo = FileToDoRepo()
-    val readDomain = ReadDomain(todoRepo, eventsRepo)
+    val readDomain = ReadDomain(eventsRepo)
     println(readDomain.getToDosByStatus(ToDoItem.Status.DONE))
 
 
