@@ -24,15 +24,14 @@ class ReadDomain(private val toDoRepo: ToDoRepoInterface, private val eventsRepo
         }
     }
 
-
     fun getToDosByStatus(status: ToDoItem.Status): List<GetToDoByStatusModel> {
-        val listOfToDoItems = toDoRepo.fetchToDoItemsByStatus(status)
-        return listOfToDoItems.map { toDoItem ->
-            GetToDoByStatusModel(toDoItem.id, toDoItem.taskName)
-        }
+        val projectedToDos = getAllTodos()
+        val toDosByStatus = projectedToDos.filter { it.status == status }
+        return toDosByStatus.map { toDoItem ->
+            GetToDoByStatusModel(toDoItem.id, toDoItem.taskName) }
     }
 
-    fun getToDoById(taskId: UUID): GetToDoByIdModel? {
+    fun getToDoById(taskId: UUID): GetToDoByIdModel {
         val eventsList = eventsRepo.fetchEventsByTaskId(taskId)
         val projectedToDoItem = createProjectedToDoItem(taskId, eventsList)
         val toDoItemInCorrectFormat = projectedToDoItem.let { GetToDoByIdModel(it.taskName, it.status) }
@@ -70,7 +69,7 @@ fun main() {
     val eventsRepo = FileAppendEventRepo()
     val todoRepo = FileToDoRepo()
     val readDomain = ReadDomain(todoRepo, eventsRepo)
-    println(readDomain.getAllTodos())
+    println(readDomain.getToDosByStatus(ToDoItem.Status.DONE))
 
 
 }
