@@ -12,7 +12,6 @@ import java.util.*
 class WriteDomain(private val toDoRepo: ToDoRepoInterface, private val appendEventRepo: AppendEventRepoInterface) {
 
     fun addToDoItem(toDoItem: ToDoItem) {
-        toDoRepo.addToDoItem(toDoItem)
         val event = Event(generateID(), EventName.TODO_ITEM_CREATED, "ellie.priestley", toDoItem.id, toDoItem.taskName)
         appendEventRepo.appendEvent(event)
 

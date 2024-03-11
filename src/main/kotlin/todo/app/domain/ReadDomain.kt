@@ -4,7 +4,6 @@ import todo.app.eventmodel.Event
 import todo.app.eventmodel.EventName
 import todo.app.repo.AppendEventRepoInterface
 import todo.app.repo.FileAppendEventRepo
-import todo.app.repo.FileToDoRepo
 import todo.app.todomodels.ToDoItem
 import todo.app.todomodels.GetAllToDoModel
 import todo.app.todomodels.GetToDoByIdModel
