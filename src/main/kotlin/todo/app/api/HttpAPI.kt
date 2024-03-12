@@ -45,7 +45,7 @@ class HttpAPI(readDomain: ReadDomain, writeDomain: WriteDomain) {
     private fun updateToDoTaskNameAndGenerateJsonResponse(jsonNodeRequestedToPatch: JsonNode, toDoItemId: String?, writeDomain: WriteDomain): Response {
         val taskName = jsonNodeRequestedToPatch.get("taskName").asText()
         val editedDate = LocalDateTime.now().format((DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-        val toDoItem = toDoItemId?.let {writeDomain.editToDoItemName(UUID.fromString(toDoItemId), taskName, editedDate) }
+        val toDoItem = toDoItemId?.let {writeDomain.editToDoItemName(UUID.fromString(toDoItemId), taskName) }
         println("TOdo item from API: $toDoItem")
         val jsonResponse = mapper.writeValueAsString(toDoItem)
         return Response(OK).body(jsonResponse)

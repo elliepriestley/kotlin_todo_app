@@ -36,7 +36,7 @@ class ReadDomain(private val eventsRepo: AppendEventRepoInterface) {
         return toDoItemInCorrectFormat
     }
 
-    private fun getToDoByIdFullToDoModel(taskId: UUID): ToDoItem {
+    fun getToDoByIdFullToDoModel(taskId: UUID): ToDoItem {
         val eventsList = eventsRepo.fetchEventsByTaskId(taskId)
         val projectedToDoItem = createProjectedToDoItem(taskId, eventsList)
         return projectedToDoItem

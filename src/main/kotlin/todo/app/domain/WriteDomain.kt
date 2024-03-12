@@ -9,7 +9,7 @@ import todo.app.todomodels.ToDoItem
 import todo.app.repo.ToDoRepoInterface
 import java.util.*
 
-class WriteDomain(private val toDoRepo: ToDoRepoInterface, private val appendEventRepo: AppendEventRepoInterface) {
+class WriteDomain(private val toDoRepo: ToDoRepoInterface, private val appendEventRepo: AppendEventRepoInterface, private val readDomain: ReadDomain) {
 
     fun addToDoItem(toDoItem: ToDoItem) {
         val event = Event(generateID(), EventName.TODO_ITEM_CREATED, "ellie.priestley", toDoItem.id, toDoItem.taskName)
@@ -17,11 +17,11 @@ class WriteDomain(private val toDoRepo: ToDoRepoInterface, private val appendEve
 
     }
 
-    fun editToDoItemName(taskId: UUID, updatedToDoTaskName: String, editedDate: String): ToDoItem? {
-        val todoItem = toDoRepo.editToDoItemName(taskId, updatedToDoTaskName, editedDate)
+    fun editToDoItemName(taskId: UUID, updatedToDoTaskName: String): ToDoItem? {
         val event = Event(generateID(), EventName.TODO_ITEM_NAME_UPDATED, "ellie.priestley", taskId, updatedToDoTaskName)
         appendEventRepo.appendEvent(event)
-        return todoItem
+        val projectedToDoItem = readDomain.getToDoByIdFullToDoModel(taskId)
+        return projectedToDoItem
     }
 
     fun markToDoItemAsDone(taskId: UUID): ToDoItem? {
