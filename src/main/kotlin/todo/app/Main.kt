@@ -9,13 +9,11 @@ import todo.app.api.HttpAPI
 import todo.app.domain.ReadDomain
 import todo.app.domain.WriteDomain
 import todo.app.repo.FileAppendEventRepo
-import todo.app.repo.FileToDoRepo
 
 fun main() {
-    val taskRepo = FileToDoRepo()
     val eventRepo = FileAppendEventRepo()
     val readDomain = ReadDomain(eventRepo)
-    val writeDomain = WriteDomain(taskRepo, eventRepo, readDomain)
+    val writeDomain = WriteDomain(eventRepo, readDomain)
     val api = HttpAPI(readDomain, writeDomain)
     val printingApp: HttpHandler = DebuggingFilters.PrintRequest().then(api.app)
 

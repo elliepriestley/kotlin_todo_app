@@ -33,12 +33,13 @@ class FileAppendEventRepo: AppendEventRepoInterface {
         return eventItemsList
     }
 
-    override fun fetchEventsByTaskId(taskId: UUID): List<Event> {
+    override fun fetchEventsByTaskId(taskId: UUID): List<Event>? {
         val eventsList = eventItemsList.filter { event ->
             event.taskId == taskId
         }
-        return eventsList
-
+        return eventsList.ifEmpty {
+            null
+        }
     }
 
     private fun saveEventListToFile() {

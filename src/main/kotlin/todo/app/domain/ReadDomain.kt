@@ -18,7 +18,12 @@ class ReadDomain(private val eventsRepo: AppendEventRepoInterface) {
 
         return listOfUniqueToDoEvents.map { event ->
             val toDoItem = getToDoByIdFullToDoModel(event.taskId)
-            GetAllToDoModel(id = toDoItem.id, taskName = toDoItem.taskName, status = toDoItem.status)
+            (if (toDoItem != null) {
+                GetAllToDoModel(id = toDoItem.id, taskName = toDoItem.taskName, status = toDoItem.status)
+            } else {
+                null
+            })!!
+
         }
     }
 
@@ -26,21 +31,33 @@ class ReadDomain(private val eventsRepo: AppendEventRepoInterface) {
         val projectedToDos = getAllTodos()
         val toDosByStatus = projectedToDos.filter { it.status == status }
         return toDosByStatus.map { toDoItem ->
-            GetToDoByStatusModel(toDoItem.id, toDoItem.taskName) }
+            GetToDoByStatusModel(toDoItem.id, toDoItem.taskName)
+        }
     }
 
-    fun getToDoById(taskId: String): GetToDoByIdModel {
+    fun getToDoById(taskId: String): GetToDoByIdModel? {
         val taskIdAsUUID = UUID.fromString(taskId)
         val eventsList = eventsRepo.fetchEventsByTaskId(taskIdAsUUID)
-        val projectedToDoItem = createProjectedToDoItem(taskIdAsUUID, eventsList)
-        val toDoItemInCorrectFormat = projectedToDoItem.let { GetToDoByIdModel(it.taskName, it.status) }
-        return toDoItemInCorrectFormat
+        return if (eventsList == null) {
+            println("error finding todos for that id")
+            null
+        } else {
+            val projectedToDoItem = createProjectedToDoItem(taskIdAsUUID, eventsList)
+            val toDoItemInCorrectFormat = projectedToDoItem.let { GetToDoByIdModel(it.taskName, it.status) }
+            toDoItemInCorrectFormat
+        }
     }
 
-    fun getToDoByIdFullToDoModel(taskId: UUID): ToDoItem {
+    fun getToDoByIdFullToDoModel(taskId: UUID): ToDoItem? {
         val eventsList = eventsRepo.fetchEventsByTaskId(taskId)
-        val projectedToDoItem = createProjectedToDoItem(taskId, eventsList)
-        return projectedToDoItem
+        return if (eventsList != null) {
+            val projectedToDoItem = createProjectedToDoItem(taskId, eventsList)
+            projectedToDoItem
+        } else {
+             null
+        }
+
+
     }
 
     private fun createProjectedToDoItem(taskId: UUID, eventsList: List<Event>): ToDoItem {
