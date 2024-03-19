@@ -65,7 +65,8 @@ Response:
 ```
 
 ### POST /todos
-- To add a todo item 
+- To create a new todo item 
+- A note on the default behaviour: when a new todo item is created, the default status of this todo item will be "NOT_DONE"
 
 Request
 ```
