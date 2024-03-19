@@ -1,7 +1,7 @@
 ## Goal: learn about event sourcing in a hands-on manner.
 
 1. Build a simple app without event sourcing
-2. 
+
 ### GET /todos
 - To get details of all todos
 

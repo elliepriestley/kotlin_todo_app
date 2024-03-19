@@ -29,7 +29,17 @@
 - Introduce event sourcing. 
 - For the write operations, create events and append them to an events_log file.
 
-base properties of events: eventId, eventName, eventCreatedDate, eventCreator, analytics data
+### Milestone 4
+- Refactor:
+  - Refactor domain and API so that the domain holds all business logic.
+- Remove dependency on todo repo from write domain - all operations now solely should use Event Sourcing
+
+### Milestone 5
+- Create different event types using composition or inheritance 
+- Introduce validation (both from data input and existing data )
+
+
+Base properties of events: eventId, eventName, eventCreatedDate, eventCreator, analytics data
 
 ### EXAMPLE:
 
