@@ -29,9 +29,10 @@ class ReadDomain(private val eventsRepo: AppendEventRepoInterface) {
             GetToDoByStatusModel(toDoItem.id, toDoItem.taskName) }
     }
 
-    fun getToDoById(taskId: UUID): GetToDoByIdModel {
-        val eventsList = eventsRepo.fetchEventsByTaskId(taskId)
-        val projectedToDoItem = createProjectedToDoItem(taskId, eventsList)
+    fun getToDoById(taskId: String): GetToDoByIdModel {
+        val taskIdAsUUID = UUID.fromString(taskId)
+        val eventsList = eventsRepo.fetchEventsByTaskId(taskIdAsUUID)
+        val projectedToDoItem = createProjectedToDoItem(taskIdAsUUID, eventsList)
         val toDoItemInCorrectFormat = projectedToDoItem.let { GetToDoByIdModel(it.taskName, it.status) }
         return toDoItemInCorrectFormat
     }
@@ -40,10 +41,6 @@ class ReadDomain(private val eventsRepo: AppendEventRepoInterface) {
         val eventsList = eventsRepo.fetchEventsByTaskId(taskId)
         val projectedToDoItem = createProjectedToDoItem(taskId, eventsList)
         return projectedToDoItem
-    }
-
-    fun generateNewIdNumber(): UUID {
-        return UUID.randomUUID()
     }
 
     private fun createProjectedToDoItem(taskId: UUID, eventsList: List<Event>): ToDoItem {

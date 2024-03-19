@@ -22,6 +22,84 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class HttpAPI(readDomain: ReadDomain, writeDomain: WriteDomain) {
+
+    val app: HttpHandler = routes(
+        "/todos" bind GET to { _ ->
+            val toDoList = readDomain.getAllTodos()
+            val jsonResponse = mapper.writeValueAsString(toDoList)
+            Response(OK).body(jsonResponse)
+        },
+
+        "/todos/status/{status}" bind GET to { req ->
+            val status: String? = req.path("status")
+            when (status) {
+                "NOT_DONE" -> {
+                    // should the API have access to the enum class? Or should it be a string parameter
+                    val filteredToDoList = readDomain.getToDosByStatus(ToDoItem.Status.NOT_DONE)
+                    Response(OK).body(mapper.writeValueAsString(filteredToDoList))
+                }
+                "DONE" -> {
+                    val filteredToDoList = readDomain.getToDosByStatus(ToDoItem.Status.DONE)
+                    Response(OK).body(mapper.writeValueAsString(filteredToDoList))
+                }
+                else -> {
+                    Response(BAD_REQUEST).body("Invalid status type in URL")
+                }
+            }
+        },
+
+        "/todos/{id}" bind GET to { req ->
+            val toDoItemId: String? = req.path("id")
+            val toDoItem = toDoItemId?.let { readDomain.getToDoById(toDoItemId) }
+
+            if (toDoItem != null) {
+                val jsonResponse = mapper.writeValueAsString(toDoItem)
+                Response(OK).body(jsonResponse)
+            } else {
+                Response(NOT_FOUND).body("To do item not found")
+            }
+        },
+
+        "/todos" bind POST to { req ->
+            val jsonToDoTask = req.bodyString()
+            val jsonNode = try {
+                mapper.readTree(jsonToDoTask)
+            } catch (e: Exception) {
+                null
+            }
+
+            if (jsonNode != null && jsonNode.has("taskName")) {
+                val taskName = jsonNode.get("taskName").asText()
+                val newToDoItem = writeDomain.addToDoItem(taskName)
+                val jsonResponse = mapper.writeValueAsString(newToDoItem)
+                Response(OK).body(jsonResponse)
+            } else {
+                Response(BAD_REQUEST).body("Invalid JSON format or missing taskName field")
+            }
+        },
+
+        "todos/{id}" bind PATCH to { req ->
+            val toDoItemId: String?  = req.path("id")
+            val jsonDataRequestedToPatch = req.bodyString()
+            val jsonNodeRequestedToPatch = try {
+                mapper.readTree(jsonDataRequestedToPatch)
+            } catch (e: Exception) {
+                null
+            }
+
+            if (jsonNodeRequestedToPatch != null) {
+                when (returnWhichPropertyNeedsPatching(jsonNodeRequestedToPatch)) {
+                    "taskName" -> updateToDoTaskNameAndGenerateJsonResponse(jsonNodeRequestedToPatch, toDoItemId, writeDomain)
+                    "status" -> updateToDoTaskStatusAndGenerateJsonResponse(jsonNodeRequestedToPatch, toDoItemId, writeDomain)
+                    "Request To Update Both" -> Response(BAD_REQUEST).body("Invalid Request. You may request to change one field per request")
+                    else -> Response(BAD_REQUEST).body("Json Request does not exist or is invalid. You can only update taskName or status")
+                }
+            } else {
+                Response(BAD_REQUEST).body("Json Request Node is null")
+            }
+        }
+
+    )
     private val mapper = jacksonObjectMapper().apply {
         enable(SerializationFeature.INDENT_OUTPUT)
     }
@@ -44,9 +122,7 @@ class HttpAPI(readDomain: ReadDomain, writeDomain: WriteDomain) {
 
     private fun updateToDoTaskNameAndGenerateJsonResponse(jsonNodeRequestedToPatch: JsonNode, toDoItemId: String?, writeDomain: WriteDomain): Response {
         val taskName = jsonNodeRequestedToPatch.get("taskName").asText()
-        val editedDate = LocalDateTime.now().format((DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-        val toDoItem = toDoItemId?.let {writeDomain.editToDoItemName(UUID.fromString(toDoItemId), taskName) }
-        println("TOdo item from API: $toDoItem")
+        val toDoItem = toDoItemId?.let {writeDomain.editToDoItemName(toDoItemId, taskName) }
         val jsonResponse = mapper.writeValueAsString(toDoItem)
         return Response(OK).body(jsonResponse)
     }
@@ -62,7 +138,7 @@ class HttpAPI(readDomain: ReadDomain, writeDomain: WriteDomain) {
     }
 
     private fun attemptToUpdateToDoItemAsDone(toDoItemId: String?, writeDomain: WriteDomain): Response {
-        val toDoItem = toDoItemId?.let { writeDomain.markToDoItemAsDone(UUID.fromString(toDoItemId)) }
+        val toDoItem = toDoItemId?.let { writeDomain.markToDoItemAsDone(toDoItemId) }
         return if (toDoItem != null) {
             toDoItem.editedDate = LocalDateTime.now().format((DateTimeFormatter.ISO_LOCAL_DATE_TIME))
             val jsonResponse = mapper.writeValueAsString(toDoItem)
@@ -73,7 +149,7 @@ class HttpAPI(readDomain: ReadDomain, writeDomain: WriteDomain) {
     }
 
     private fun attemptToUpdateToDoItemAsNotDone(toDoItemId: String?, writeDomain: WriteDomain): Response {
-        val toDoItem = toDoItemId?.let { writeDomain.markToDoItemAsNotDone(UUID.fromString(toDoItemId)) }
+        val toDoItem = toDoItemId?.let { writeDomain.markToDoItemAsNotDone(toDoItemId) }
         return if (toDoItem != null) {
             toDoItem.editedDate = LocalDateTime.now().format((DateTimeFormatter.ISO_LOCAL_DATE_TIME))
             val jsonResponse = mapper.writeValueAsString(toDoItem)
@@ -84,84 +160,7 @@ class HttpAPI(readDomain: ReadDomain, writeDomain: WriteDomain) {
     }
 
 
-    val app: HttpHandler = routes(
-        "/todos" bind GET to { _ ->
-            val toDoList = readDomain.getAllTodos()
-            val jsonResponse = mapper.writeValueAsString(toDoList)
-            Response(OK).body(jsonResponse)
-        },
 
-        "/todos/status/{status}" bind GET to { req ->
-            val status: String? = req.path("status")
-            when (status) {
-                "NOT_DONE" -> {
-                    val filteredToDoList = readDomain.getToDosByStatus(ToDoItem.Status.NOT_DONE)
-                    Response(OK).body(mapper.writeValueAsString(filteredToDoList))
-                }
-                "DONE" -> {
-                    val filteredToDoList = readDomain.getToDosByStatus(ToDoItem.Status.DONE)
-                    Response(OK).body(mapper.writeValueAsString(filteredToDoList))
-                }
-                else -> {
-                    Response(BAD_REQUEST).body("Invalid status type in URL")
-                }
-            }
-        },
-
-        "/todos/{id}" bind GET to { req ->
-            val toDoItemId: String? = req.path("id")
-            val toDoItem = toDoItemId?.let { readDomain.getToDoById(UUID.fromString(it)) }
-
-            if (toDoItem != null) {
-                val jsonResponse = mapper.writeValueAsString(toDoItem)
-                Response(OK).body(jsonResponse)
-            } else {
-                Response(NOT_FOUND).body("To do item not found")
-            }
-        },
-
-        "/todos" bind POST to { req ->
-            val jsonToDoTask = req.bodyString()
-            val jsonNode = try {
-                mapper.readTree(jsonToDoTask)
-            } catch (e: Exception) {
-                null
-            }
-
-            if (jsonNode != null && jsonNode.has("taskName")) {
-                val taskName = jsonNode.get("taskName").asText()
-                val newId = readDomain.generateNewIdNumber()
-                val newToDoItem = ToDoItem(newId, taskName, ToDoItem.Status.NOT_DONE)
-                writeDomain.addToDoItem(newToDoItem)
-                val jsonResponse = mapper.writeValueAsString(newToDoItem)
-                Response(OK).body(jsonResponse)
-            } else {
-                Response(BAD_REQUEST).body("Invalid JSON format or missing taskName field")
-            }
-        },
-
-        "todos/{id}" bind PATCH to { req ->
-            val toDoItemId: String?  = req.path("id")
-            val jsonDataRequestedToPatch = req.bodyString()
-            val jsonNodeRequestedToPatch = try {
-                mapper.readTree(jsonDataRequestedToPatch)
-            } catch (e: Exception) {
-                null
-            }
-
-            if (jsonNodeRequestedToPatch != null) {
-                when (returnWhichPropertyNeedsPatching(jsonNodeRequestedToPatch)) {
-                    "taskName" -> updateToDoTaskNameAndGenerateJsonResponse(jsonNodeRequestedToPatch, toDoItemId, writeDomain)
-                    "status" -> updateToDoTaskStatusAndGenerateJsonResponse(jsonNodeRequestedToPatch, toDoItemId, writeDomain)
-                    "Request To Update Both" -> Response(BAD_REQUEST).body("Invalid Request. You may request to change one field per request")
-                    else -> Response(BAD_REQUEST).body("Json Request does not exist or is invalid. You can only update taskName and status fields")
-                }
-            } else {
-                Response(BAD_REQUEST).body("Json Request Node is null")
-            }
-        }
-
-    )
 
 }
 
