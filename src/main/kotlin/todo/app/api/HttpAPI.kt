@@ -31,19 +31,11 @@ class HttpAPI(readDomain: ReadDomain, writeDomain: WriteDomain) {
 
         "/todos/status/{status}" bind GET to { req ->
             val status: String? = req.path("status")
-            when (status) {
-                "NOT_DONE" -> {
-                    // should the API have access to the enum class? Or should it be a string parameter
-                    val filteredToDoList = readDomain.getToDosByStatus(ToDoItem.Status.NOT_DONE)
-                    Response(OK).body(mapper.writeValueAsString(filteredToDoList))
-                }
-                "DONE" -> {
-                    val filteredToDoList = readDomain.getToDosByStatus(ToDoItem.Status.DONE)
-                    Response(OK).body(mapper.writeValueAsString(filteredToDoList))
-                }
-                else -> {
-                    Response(BAD_REQUEST).body("Invalid status type in URL")
-                }
+            if (status != "DONE" && status != "NOT_DONE") {
+                Response(BAD_REQUEST).body("Invalid status type in URL")
+            } else {
+                val filteredToDoList = readDomain.getToDosByStatus(status)
+                Response(OK).body(mapper.writeValueAsString(filteredToDoList))
             }
         },
 

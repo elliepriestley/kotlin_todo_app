@@ -27,9 +27,15 @@ class ReadDomain(private val eventsRepo: AppendEventRepoInterface) {
         }
     }
 
-    fun getToDosByStatus(status: ToDoItem.Status): List<GetToDoByStatusModel> {
+    fun getToDosByStatus(status: String): List<GetToDoByStatusModel> {
+        val statusEnum: ToDoItem.Status
+        try {
+            statusEnum = ToDoItem.Status.valueOf(status.uppercase(Locale.ROOT))
+        } catch (e: IllegalArgumentException) {
+            return emptyList()
+        }
         val projectedToDos = getAllTodos()
-        val toDosByStatus = projectedToDos.filter { it.status == status }
+        val toDosByStatus = projectedToDos.filter { it.status == statusEnum }
         return toDosByStatus.map { toDoItem ->
             GetToDoByStatusModel(toDoItem.id, toDoItem.taskName)
         }
@@ -79,7 +85,7 @@ class ReadDomain(private val eventsRepo: AppendEventRepoInterface) {
 fun main() {
     val eventsRepo = FileAppendEventRepo()
     val readDomain = ReadDomain(eventsRepo)
-    println(readDomain.getToDosByStatus(ToDoItem.Status.DONE))
+    println(readDomain.getToDosByStatus("DONE"))
 
 
 }

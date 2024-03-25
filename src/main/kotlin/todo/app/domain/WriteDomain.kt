@@ -9,11 +9,16 @@ import java.util.*
 
 class WriteDomain(private val appendEventRepo: AppendEventRepoInterface, private val readDomain: ReadDomain) {
 
-    fun addToDoItem(toDoTaskName: String): ToDoItem? {
+    fun createToDoItemWriteModel(taskName: String): ToDoItem? {
         val taskId = generateID()
-        val event = Event(generateID(), EventName.TODO_ITEM_CREATED, "ellie.priestley", taskId, toDoTaskName)
+        val event = Event(generateID(), EventName.TODO_ITEM_CREATED, "ellie.priestley", taskId, taskName)
         appendEventRepo.appendEvent(event)
         return readDomain.getToDoByIdFullToDoModel(taskId)
+    }
+
+    fun addToDoItem(toDoTaskName: String): ToDoItem? {
+        val toDoItem = createToDoItemWriteModel(toDoTaskName)
+        return toDoItem?.id?.let { readDomain.getToDoByIdFullToDoModel(it) }
     }
 
     fun editToDoItemName(taskId: String, updatedToDoTaskName: String): ToDoItem? {
